@@ -28,6 +28,10 @@
     cursor: ew-resize;
     background-color: black;
 }
+#regressionBox {
+    border: solid 1px #000;
+    width: 500px;
+}
 .label {
     display: inline-block;
 }

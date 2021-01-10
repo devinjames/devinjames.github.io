@@ -78,10 +78,12 @@
 
 </div>
 
-<div>
-    Third-degree poly
-    <div id="deg3poly"></div>
-    Prediction x = <input id="predictInput" value="4">
+<div id="regressionBox">
+    <div>Polynomial Regression</div>
+    <label for="showRegression"><input type="checkbox" name="showRegression" id="showRegression">PLOT</label>
+    <div>Degree: <span id="polyDegreeValue">3</span> <button id="increasePoly">+</button> / <button id="decreasePoly">-</button></div>
+    <div id="deg3poly"></div><a href="#" id="plotRegression">Plot regression</a>
+    <div>Prediction Value @ X=<input id="predictInput" value="4"></div>
     <div id="prediction"></div>
 
 </div>

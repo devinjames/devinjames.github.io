@@ -26,6 +26,7 @@ var calibrations = new Array({
     v_y1: 120
 }); // added some defaults for this graph
 var polyResult = null;
+var polyDegree = 4;
 var mode = 0;   // clickmode for canvas
 var zoomRatio = 3;
 var crossXY = [];
@@ -56,8 +57,13 @@ var getScale = function() {
 
 var drawRegression = function() {
     // TODO: retrace the regression so it can be visualized
+    console.log("plotting regression")
     for (let x = datum.x; x < canvas.width; x++) {
-        // transformPoint(x, polypolyResult.getTerms())
+        let y = new window.poly(polyResult, polyDegree).predictY(polyResult, transformPoint(x, 0).x);
+        // console.log("x,y=" + x +", "+ y);
+        let pt = transformPoint(x, y, true);
+        // console.log("x,y=" + x +", "+ pt.y);
+        drawSquareMarker(x, pt.y, "magenta", 2, 2);
 
     }
 }
@@ -79,8 +85,8 @@ var updateCalibrationUI = function() {
 var transformPoint = function(x,y, reverse=false) {
     // transform a pixel-based x,y into an x,y using the chart axis scales
     if (reverse) {
-        var ox = (x - readDatum().x) * getScale().x;
-        var oy = (canvas.height - y - readDatum().y) * getScale().y;
+        var ox = (x/getScale().x) + readDatum().x;
+        var oy = (canvas.height - readDatum().y - y/getScale().y);
         return { x: ox, y: oy };
 
     }
@@ -195,7 +201,6 @@ var drawZoomBox = function(x,y) {
     ytxt = (canvas.height - y < boxSize) ? y + offset + 2: y - offset;
 
     // fill the image inside the boxgrid
-    console.log("in")
     c.scale(zoomRatio, zoomRatio);
     // image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight
     c.drawImage(image, rescaled.x - boxSize / 2 / zoomRatio, rescaled.y - boxSize / 2 / zoomRatio, boxSize / zoomRatio, boxSize / zoomRatio, dx / zoomRatio, dy / zoomRatio, boxSize / zoomRatio, boxSize / zoomRatio);
@@ -329,12 +334,20 @@ var addPointToUiList = function (x, y) {
         redrawSeries();
         drawSquareMarker(e.target.getAttribute("data-x"), e.target.getAttribute("data-y"), "red");
     });
-    a.addEventListener('mouseout', (e) => { clearGraph(); });
+    // a.addEventListener('mouseout', (e) => { clearGraph(); });
 
     div.appendChild(a);
     document.getElementById('series' + activeSeries).appendChild(div);
 }
 
+var buildEquation = function(terms) {
+    let out = "";
+    for (let i = terms.length - 1; i >= 0; i--) {
+        out += terms[i].toFixed(2).toString() + "x^" + (i - 1).toString();
+    }
+    return out;
+
+}
 
 var recalcPoly = function() {
     // recalculate the polyonimal from the data and update the UI
@@ -344,10 +357,10 @@ var recalcPoly = function() {
         data.push(transformPoint(pt[0], pt[1]));
     }
     console.log(data);
-    var p = new window.poly(data, 3);
+    var p = new window.poly(data, polyDegree);
     polyResult = p.getTerms();
-    document.getElementById("deg3poly").innerText = p.getTerms();;
-    document.getElementById("prediction").innerText = p.predictY(p.getTerms(), document.getElementById("predictInput").value);
+    document.getElementById("deg3poly").innerText = buildEquation(polyResult);
+    document.getElementById("prediction").innerText = p.predictY(polyResult, document.getElementById("predictInput").value);
 }
 
 var markPoint = function (e) {
@@ -480,7 +493,12 @@ var handleClick = function (e) {
 
 // set all eventListners  up
 canvas.addEventListener("mousemove", drawCrosshair);
-canvas.addEventListener("mouseout", clearGraph);
+canvas.addEventListener("mouseout", (e) => {
+    clearGraph();
+    if (document.getElementById("showRegression").checked) {
+        drawRegression();
+    }
+});
 canvas.addEventListener("click", handleClick)
 document.getElementById('setDatum0div').addEventListener("click", () => { setMode(2); toggleClass("setDatum0btn", "+activeBtn")});
 document.getElementById('markPoints0').addEventListener("click", () => {
@@ -510,6 +528,9 @@ document.getElementById("selectPoint2").addEventListener("click", (e) => {
 document.getElementById("showHideCalib").addEventListener('click', (e) => { toggleClass("calibrate", "hidden")});
 document.getElementById('filebrowsed').addEventListener('change', readImage, false);
 document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); });
+document.getElementById("increasePoly").addEventListener('click', () => {polyDegree += 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
+document.getElementById("decreasePoly").addEventListener('click', () => {polyDegree -= 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
+document.getElementById("plotRegression").addEventListener("click", () => { recalcPoly(); drawRegression(); });
 window.addEventListener("keydown", (e) => {
 
     if (e.key == "+") {
