@@ -335,6 +335,7 @@ var drawSquareMarker = function (x, y, color, w = 10, h = 10) {
 
 
 function readImage(el) {
+    // read image from user and display it
     console.log("changing image");
     let fileobj = el.target.files[0];
     console.log(fileobj);
@@ -359,6 +360,7 @@ function readImage(el) {
 }
 
 var setMode = function(newMode) {
+    // sets the current clickmode for the canvas
     clearButtons();
     console.log("mode changed to " + newMode);
     mode = newMode;
