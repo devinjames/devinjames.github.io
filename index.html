@@ -19,11 +19,11 @@
             <div class="value" id="datum0">Not set</div>
             <div class="button" id="setDatum0div"><button id="setDatum0btn">Set Datum</button></div>
         </div>
-        <div class="row">
+        <!-- <div class="row">
             <div class="label">Scale: </div>
             <div class="value">Uncalibrated</div>
             <div class="button"><button id="calibrateXYscale0">Calibrate</button></div>
-        </div>
+        </div> -->
         <!-- <div class="row">
             <div class="label">Y-Scale: </div>
             <div class="value">Uncalibrated</div>
@@ -32,8 +32,49 @@
         <div class="row">
             <div class="button"><button id="markPoints0">Mark Points</button></div>
         </div>
-    <div id="series0" class="seriesList"></div>
+        <div id="series0" class="seriesList"></div>
     </div>
+</div>
+<div id="calibrate">
+    <div>
+        <div class="calibHeader">Point 1:</div>
+        <div id="calibPoint1" class="value">Uses Datum</div>
+        <div id="point2entry">
+            <div>Pixel Location: <div class="label" id="point1pixel">N/A</div>
+            </div>
+            <div>Measured:</div>
+            X-Value: <input type="text" name="" id="calib1valueX" value="0">
+            Y-Value: <input type="text" name="" id="calib1valueY" value="0">
+            <button id="setCalib1">Set Point</button>
+        </div>
+        <!-- <div class="button"><button id="z">Use Datum</button></div> -->
+        <!-- <div class="button"><button id="z">Select Point</button></div> -->
+    </div>
+    <div>
+        <div class="calibHeader">Point 2:</div>
+        <div id="calibPoint2" class="value">Not set</div>
+        <div class="button"><button id="selectPoint2">Select Point</button></div>
+        <div id="point2entry">
+            <div>Pixel Location: <div class="label" id="point2pixel">N/A</div></div>
+            <div>Measured:</div>
+            X-Value: <input type="text" name="" id="calib2valueX">
+            Y-Value: <input type="text" name="" id="calib2valueY">
+            <button id="setCalib2">Set Point</button>
+        </div>
+    </div>
+    <div>
+        <div class="calibHeader">
+            Results
+        </div>
+        <div>
+            dX = <span id="calibdx">Not set</span>
+        </div>
+        <div>
+            dY = <span id="calibdy">Not set</span>
+        </div>
+
+    </div>
+
 </div>
 
 <div id="notes">

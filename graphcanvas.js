@@ -18,10 +18,12 @@
 		// note that scaleY are transformed where the lowest y is at the bottom instead of the top
     var series = new Array(new Array());
     var showDecimals = 2;
+    var calibrations = new Array({x0: 0, y0: 0, v_x0: 0, v_y0: 0, x1: 0, y1: 0, v_x1: 0, v_y1: 0});
+
     var mode = 0;
         // 0 - nothing
         // 1 - mark points in series
-        // 2 - set datum
+        // 1 - set datum
         //
 
     /*
@@ -32,8 +34,23 @@
 
     */
 
+    var getScale = function() {
+        let cal = calibrations[activeSeries]
+        let dx = (cal.v_x1 - cal.v_x0) / (cal.x1 - cal.x0);
+        let dy = (cal.v_y0 - cal.v_y1) / (cal.y1 - cal.y0); // note that y's are inverted due to x,y starting at top left of canvas instead of bottom-left
+        return {x: dx, y: dy};
+    }
+
 	var readDatum = function() {
 		return {x: datum.x, y: canvas.height - datum.y};
+    }
+
+    var updateCalibrationUI = function() {
+        document.getElementById("point1pixel").innerText =  datum.x + ", " + datum.y;
+        document.getElementById("point2pixel").innerText = calibrations[activeSeries].x1 + ", " + calibrations[activeSeries].y1;
+        document.getElementById("calibdx").innerText = getScale().x;
+        document.getElementById("calibdy").innerText = getScale().y;
+        redrawUiPointList();
     }
 
     var prepareDataPoints = function() {
@@ -52,8 +69,8 @@
     }
 
 	var transformPoint = function(x,y) {
-		var ox = (x - readDatum().x) * (scaleX[activeSeries][3] - scaleX[activeSeries][2]) / (scaleX[activeSeries][1] - scaleX[activeSeries][0]);
-		var oy = (canvas.height - y - readDatum().y) * (scaleY[activeSeries][3] - scaleY[activeSeries][2]) / (scaleY[activeSeries][1] - scaleY[activeSeries][0]);
+        var ox = (x - readDatum().x) * getScale().x;
+        var oy = (canvas.height - y - readDatum().y) * getScale().y;
 		return {x: ox, y: oy};
 	}
 
@@ -196,8 +213,18 @@
         }
     }
 
-    var calibrate = function(seriesId) {
-        msgbox("Calibrate series id " + seriesId);
+    var setCalibrationXYpixels = function(seriesId, pointNum, x, y) {
+        calibrations[seriesId]['x' + pointNum] = x;
+        calibrations[seriesId]['y' + pointNum] = y;
+        console.log(calibrations[seriesId]);
+        updateCalibrationUI();
+    }
+
+    var setCalibrationXYvalues = function(seriesId, pointNum, x, y) {
+        calibrations[seriesId]['v_x' + pointNum] = parseInt(x);
+        calibrations[seriesId]['v_y' + pointNum] = parseInt(y);
+        console.log(calibrations[seriesId]);
+        updateCalibrationUI();
     }
 
     var redrawUiPointList = function() {
@@ -344,7 +371,7 @@
     }
 
     var clearButtons = function() {
-        let btns = new Array("setDatum0btn", "markPoints0");
+        let btns = new Array("setDatum0btn", "markPoints0", "selectPoint2");
         for (let index = 0; index < btns.length; index++) {
             toggleClass(btns[index], "-activeBtn");
 
@@ -381,14 +408,16 @@
                 setDatum(e.offsetX, e.offsetY);
                 toggleClass("setDatum0btn", "-activeBtn");
                 setMode(0);
+                setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
                 redrawUiPointList();
                 break;
-            case 3: // 3 calibrate y scale
+            case 3: // 3 add calibration point 2
+                setCalibrationXYpixels(activeSeries, 1, e.offsetX, e.offsetY);
                 break;
             case 4: // 4 calibrate x scale
                 // toggleClass("calibrateXscale0", "activeBtn");
-
                 break;
+
         }
     }
 
@@ -400,7 +429,20 @@
     document.getElementById('setDatum0div').addEventListener("click", () => { setMode(2); toggleClass("setDatum0btn", "+activeBtn")});
     // document.getElementById('calibrateYscale0').addEventListener("click", () => { setMode(3); toggleClass("calibrateYscale0", "+activeBtn") });
     // document.getElementById('calibrateXscale0').addEventListener("click", () => { setMode(4); toggleClass("calibrateXscale0", "+activeBtn") });
-    document.getElementById('markPoints0').addEventListener("click", () => { setMode(1); toggleClass("markPoints0", "+activeBtn") });
+    document.getElementById('markPoints0').addEventListener("click", () => { setMode(1); clearButtons(); toggleClass("markPoints0", "+activeBtn") });
+    document.getElementById("setCalib1").addEventListener('click', (e) => {
+        console.log(document.getElementById("calib1valueX").value);
+        setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
+    });
+    document.getElementById("setCalib2").addEventListener('click', (e) => {
+        console.log(document.getElementById("calib2valueX").value);
+        setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  document.getElementById("calib2valueY").value);
+    });
+    document.getElementById("selectPoint2").addEventListener("click", (e) => {
+        toggleClass("selectPoint2", "+activeBtn")
+        setMode(3);
+    });
+
 
     document.getElementById('filebrowsed').addEventListener('change', readImage, false);
 
