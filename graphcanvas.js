@@ -10,29 +10,26 @@ var seriesColors = ["green", "pink", "blue", "red", "yellow"];
 var activeSeries = 0;
 var xOffsets = new Array();
 var yOffsets = new Array();
-// var datum = {x: null, y: null}
 var datum = {x: 40, y: 435}
 var chartWidth = window.width * 0.75;
 var chartHeight = window.height * 0.75;
 var series = new Array(new Array());
 var showDecimals = 2;
-// var calibrations = new Array({x0: 0, y0: 0, v_x0: 0, v_y0: 0, x1: 0, y1: 0, v_x1: 0, v_y1: 0});
-var calibrations = new Array({v_x1: 4, v_y0: 0, v_y1: 120, x0: 40, x1: 321, y0: 435, y1: 113}); // added some defaults for this graph
+var calibrations = new Array({
+    x0: 40,
+    y0: 435,
+    v_x0: 0,
+    v_y0: 0,
+    x1: 286,
+    y1: 107,
+    v_x1: 4,
+    v_y1: 120
+}); // added some defaults for this graph
 var polyResult = null;
-var mode = 0;
+var mode = 0;   // clickmode for canvas
 var zoomRatio = 3;
-    // 0 - nothing
-    // 1 - mark points in series
-    // 1 - set datum
-    //
+var crossXY = [];
 
-/*
-    TODOS:
-    [ ] Show image scale proportionately if it's larger than the canvas
-    [ ] Logic for image and window sizes
-    [ ] Scaling edge-cases https://stackoverflow.com/questions/21961839/simulation-background-size-cover-in-canvas/21961894#21961894
-
-*/
 
 // initiate the default graph
 var image = new Image();
@@ -188,10 +185,14 @@ var drawZoomBox = function(x,y) {
     var boxSize = 250;
     var rescaled = canvasXYtoImageXY(x, y)
     var dx, dy = 0;
+    let offset = 10;
 
     // x & y locations where the box grid is drawn
-    dx = (canvas.width - x < boxSize) ? x - 10 - boxSize : x + 10;
-    dy = (canvas.height - y < boxSize) ? y - 10 - boxSize : y + 10;
+    dx = (canvas.width - x < boxSize) ? x - offset - boxSize : x + offset;
+    dy = (canvas.height - y < boxSize) ? y - offset - boxSize : y + offset;
+
+    xtxt = (canvas.width - x < boxSize) ? x - offset - boxSize + 2: x + offset + 2;
+    ytxt = (canvas.height - y < boxSize) ? y + offset + 2: y - offset;
 
     // fill the image inside the boxgrid
     console.log("in")
@@ -214,16 +215,29 @@ var drawZoomBox = function(x,y) {
     c.strokeRect(dx, dy + boxSize / 2, boxSize / 2, boxSize / 2); //SW
     c.strokeRect(dx + boxSize / 2, dy + boxSize / 2, boxSize / 2, boxSize / 2); // SE
 
+    c.font = "12px Courier"
+    c.beginPath();
+    // c.moveTo(xtxt, ytxt);
+    c.strokeText("Zoom (+/-): " + zoomRatio, xtxt, ytxt);
+
     // var viewPane = image.cloneNode();
     // viewPane.height = '5000px';
     // c.scale(1.01, 1.01)
     // c.scale(1, 1);
 }
 
-var drawCrosshair = function (e) {
+var drawCrosshair = function (e, xOveride=null, yOveride=null) {
     // draw the crosshair on the canvas
-    var x = e.offsetX;
-    var y = e.offsetY;
+    var x = 0;
+    var y = 0;
+    if (xOveride != null && yOveride != null) {
+        x = xOveride;
+        y = yOveride;
+    } else {
+        x = e.offsetX;
+        y = e.offsetY;
+        crossXY = [x,y];
+    }
 
     clearGraph();
     crosshairs.beginPath();
@@ -242,7 +256,7 @@ var drawCrosshair = function (e) {
     // redraw everything else as the cursor moves
     redrawSeries();
     drawDatum(datum.x, datum.y);
-    drawZoomBox(x, y);
+    drawZoomBox(crossXY[0], crossXY[1]);
 }
 
 var redrawSeries = function () {
@@ -495,5 +509,63 @@ document.getElementById("selectPoint2").addEventListener("click", (e) => {
 });
 document.getElementById("showHideCalib").addEventListener('click', (e) => { toggleClass("calibrate", "hidden")});
 document.getElementById('filebrowsed').addEventListener('change', readImage, false);
-document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); })
+document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); });
+window.addEventListener("keydown", (e) => {
 
+    if (e.key == "+") {
+        console.log("zoom ratio increase");
+        zoomRatio += 0.25;
+        clearGraph();
+        drawZoomBox(crossXY[0], crossXY[1]);
+
+    } else if (e.key == "-") {
+        console.log("zoom ratio decrease");
+        if (zoomRatio <= 1)
+            return;
+        zoomRatio -= 0.25;
+        clearGraph();
+        drawZoomBox(crossXY[0], crossXY[1]);
+
+    } else if (e.key == "ArrowUp") {
+        crossXY[1] -= 1;
+        e.preventDefault();
+        drawZoomBox(crossXY[0], crossXY[1]);
+        drawCrosshair(e, crossXY[0], crossXY[1]);
+    } else if (e.key == "ArrowDown") {
+        crossXY[1] += 1;
+        e.preventDefault();
+        drawZoomBox(crossXY[0], crossXY[1]);
+        drawCrosshair(e, crossXY[0], crossXY[1]);
+    } else if (e.key == "ArrowLeft") {
+        crossXY[0] -= 1;
+        e.preventDefault();
+        drawZoomBox(crossXY[0], crossXY[1]);
+        drawCrosshair(e, crossXY[0], crossXY[1]);
+    } else if (e.key == "ArrowRight") {
+        crossXY[0] += 1;
+        e.preventDefault();
+        drawZoomBox(crossXY[0], crossXY[1]);
+        drawCrosshair(e, crossXY[0], crossXY[1]);
+    } else if (e.key == "Enter") {
+        if (mode == 1) {
+            series[activeSeries].push([crossXY[0], crossXY[1]]);
+            redrawSeries();
+            redrawUiPointList();
+        } else if (mode == 2) {
+            setDatum(crossXY[0], crossXY[1]);
+            toggleClass("point1status", "-missing");
+            toggleClass("point1status", "+set");
+            toggleClass("setDatum0btn", "-activeBtn");
+            setMode(0);
+            setCalibrationXYpixels(activeSeries, 0, crossXY[0], crossXY[1]);
+            redrawUiPointList();
+            drawDatum();
+
+        } else if (mode == 3) {
+            setCalibrationXYpixels(activeSeries, 1, crossXY[0], crossXY[1]);
+        }
+    }
+    // console.log(e);
+
+    }
+    );

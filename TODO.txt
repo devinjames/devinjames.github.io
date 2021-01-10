@@ -1,0 +1,18 @@
+TODO
+====
+
+v1
+--
+[x] fix current scaling issue
+[x] extend keypress to set datum and calibration points as well
+[ ] on load load the default state of datum and scale into the ui
+[ ] Show image scale proportionately if it's larger than the canvas
+[ ] Logic for image and window sizes
+[ ] Scaling edge-cases https://stackoverflow.com/questions/21961839/simulation-background-size-cover-in-canvas/21961894#21961894
+[ ] refactor the everything
+[ ] recomment
+
+
+v2
+--
+[ ] improve ui, identify keyboard shortcuts to user
