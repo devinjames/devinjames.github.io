@@ -344,7 +344,7 @@
     }
 
     var clearButtons = function() {
-        let btns = new Array("setDatum0btn", "calibrateYscale0", "calibrateXscale0", "markPoints0");
+        let btns = new Array("setDatum0btn", "markPoints0");
         for (let index = 0; index < btns.length; index++) {
             toggleClass(btns[index], "-activeBtn");
 
@@ -386,7 +386,7 @@
             case 3: // 3 calibrate y scale
                 break;
             case 4: // 4 calibrate x scale
-                toggleClass("calibrateXscale0", "activeBtn");
+                // toggleClass("calibrateXscale0", "activeBtn");
 
                 break;
         }
@@ -398,8 +398,8 @@
     canvas.addEventListener("click", handleClick)
 
     document.getElementById('setDatum0div').addEventListener("click", () => { setMode(2); toggleClass("setDatum0btn", "+activeBtn")});
-    document.getElementById('calibrateYscale0').addEventListener("click", () => { setMode(3); toggleClass("calibrateYscale0", "+activeBtn") });
-    document.getElementById('calibrateXscale0').addEventListener("click", () => { setMode(4); toggleClass("calibrateXscale0", "+activeBtn") });
+    // document.getElementById('calibrateYscale0').addEventListener("click", () => { setMode(3); toggleClass("calibrateYscale0", "+activeBtn") });
+    // document.getElementById('calibrateXscale0').addEventListener("click", () => { setMode(4); toggleClass("calibrateXscale0", "+activeBtn") });
     document.getElementById('markPoints0').addEventListener("click", () => { setMode(1); toggleClass("markPoints0", "+activeBtn") });
 
     document.getElementById('filebrowsed').addEventListener('change', readImage, false);
