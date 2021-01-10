@@ -3,23 +3,24 @@ var canvas = document.getElementById("canvas"),
 ctx = canvas.getContext("2d");
 crosshairs = canvas.getContext("2d");
 
-canvas.width = 900;
-canvas.height = 500;
+canvas.width = 800;
+canvas.height = 468;
 
 var seriesColors = ["green", "pink", "blue", "red", "yellow"];
 var activeSeries = 0;
 var xOffsets = new Array();
 var yOffsets = new Array();
 // var datum = {x: null, y: null}
-var datum = {x: 45, y: 464}
+var datum = {x: 40, y: 435}
 var chartWidth = window.width * 0.75;
 var chartHeight = window.height * 0.75;
 var series = new Array(new Array());
 var showDecimals = 2;
 // var calibrations = new Array({x0: 0, y0: 0, v_x0: 0, v_y0: 0, x1: 0, y1: 0, v_x1: 0, v_y1: 0});
-var calibrations = new Array({x0: 46, y0: 464, v_x0: 0, v_y0: 0, x1: 321, y1: 113, v_x1: 4, v_y1: 120}); // added some defaults for this graph
+var calibrations = new Array({v_x1: 4, v_y0: 0, v_y1: 120, x0: 40, x1: 321, y0: 435, y1: 113}); // added some defaults for this graph
 var polyResult = null;
 var mode = 0;
+var zoomRatio = 3;
     // 0 - nothing
     // 1 - mark points in series
     // 1 - set datum
@@ -35,7 +36,11 @@ var mode = 0;
 
 // initiate the default graph
 var image = new Image();
-image.src = "./scalegraph.png";
+image.src = "./scalegraph-resized.png";
+
+var imageRescaled = image.cloneNode();
+imageRescaled.height = image.naturalHeight * 2;
+imageRescaled.width = image.naturalWidth * 2;
 
 // Make sure the image is loaded first otherwise nothing will draw.
 image.onload = function () {
@@ -89,15 +94,38 @@ var transformPoint = function(x,y, reverse=false) {
 
 var clearGraph = function () {
     // resets the canvas to show only the image
+    // ctx.scale(1,1);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     drawDatum(datum.x, datum.y);
 }
 
-var rescaleImageXY = function(x, y) {
+var canvasXYtoImageXY = function(x, y) {
+    // rescales the canvas XY into Image XY
+
+    // input: x, y from canvas
+    // output: x,y on the image
+
     // adjust the x & y of the image to match the canvas size
     // input an x & y from a canvas event and the output will an object containing the images x, y coordinates
-    var out = { x: x * image.naturalWidth / canvas.width, y: y * image.naturalHeight / canvas.height};
+    // var out = {};
+    // if (image.naturalWidth <= canvas.width) {
+    //     console.log("image smaller than canvas");
+    //     // have to upsize the zoom box
+    //     // out
+    //     xScale = image.naturalWidth / canvas.width;
+    //     xFactor = zoomRatio / xScale;
+    //     out = { x: x * xFactor, y: y * image.naturalHeight / canvas.height };
+    // } else {
+    //     console.log("image larger than canvas");
+    //     // zoombox is already upsize
+    //     xScale = image.naturalWidth / canvas.width;
+    //     xFactor = zoomRatio / xScale;
+    //     out = { x: x * xFactor, y: y * image.naturalHeight / canvas.height};
+
+    // }
     // console.log(out);
+    var out = { x: x * image.naturalWidth / canvas.width, y: y * image.naturalHeight / canvas.height };
+
     return out;
 }
 
@@ -158,13 +186,23 @@ var drawZoomBox = function(x,y) {
     let canv = document.getElementById("canvas")
     var c = canvas.getContext("2d")
     var boxSize = 250;
-    var rescaled = rescaleImageXY(x, y)
+    var rescaled = canvasXYtoImageXY(x, y)
     var dx, dy = 0;
 
+    // x & y locations where the box grid is drawn
     dx = (canvas.width - x < boxSize) ? x - 10 - boxSize : x + 10;
     dy = (canvas.height - y < boxSize) ? y - 10 - boxSize : y + 10;
 
-    c.drawImage(image, rescaled.x - boxSize / 2,  rescaled.y - boxSize / 2, boxSize, boxSize, dx, dy, boxSize, boxSize);
+    // fill the image inside the boxgrid
+    console.log("in")
+    c.scale(zoomRatio, zoomRatio);
+    // image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight
+    c.drawImage(image, rescaled.x - boxSize / 2 / zoomRatio, rescaled.y - boxSize / 2 / zoomRatio, boxSize / zoomRatio, boxSize / zoomRatio, dx / zoomRatio, dy / zoomRatio, boxSize / zoomRatio, boxSize / zoomRatio);
+
+    // the magic, return from the transformation:
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+
     // TODO: redraw the marks inside the previewer?
 
     c.strokeStyle = "black"
@@ -308,10 +346,6 @@ var markPoint = function (e) {
     redrawSeries(); // redraw
     recalcPoly();
 }
-
-
-
-// document.getElementById("calibrate0").addEventListener("click", calibrate(0));
 
 var drawSquareMarker = function (x, y, color, w = 10, h = 10) {
     // draw a single square marker at location
