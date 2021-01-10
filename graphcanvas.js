@@ -10,12 +10,14 @@
     var activeSeries = 0;
     var xOffsets = new Array();
     var yOffsets = new Array();
-    var datum = {x: null, y: null}
+    // var datum = {x: null, y: null}
+    var datum = {x: 45, y: 464}
     var chartWidth = window.width * 0.75;
     var chartHeight = window.height * 0.75;
     var series = new Array(new Array());
     var showDecimals = 2;
-    var calibrations = new Array({x0: 0, y0: 0, v_x0: 0, v_y0: 0, x1: 0, y1: 0, v_x1: 0, v_y1: 0});
+    // var calibrations = new Array({x0: 0, y0: 0, v_x0: 0, v_y0: 0, x1: 0, y1: 0, v_x1: 0, v_y1: 0});
+    var calibrations = new Array({x0: 46, y0: 464, v_x0: 0, v_y0: 0, x1: 321, y1: 113, v_x1: 4, v_y1: 120}); // added some defaults for this graph
 
     var mode = 0;
         // 0 - nothing
@@ -273,6 +275,19 @@
         document.getElementById('series' + activeSeries).appendChild(div);
     }
 
+
+    var recalcPoly = function() {
+        let data = new Array();
+        for (let i = 0; i < series[activeSeries].length; i++) {
+            const pt = series[activeSeries][i];
+            data.push(transformPoint(pt[0], pt[1]));
+        }
+        console.log(data);
+        var p = new window.poly(data, 3);
+        document.getElementById("deg3poly").innerText = p.getTerms();;
+        document.getElementById("prediction").innerText = p.predictY(p.getTerms(), document.getElementById("predictInput").value);
+    }
+
     var markPoint = function (e) {
         // add a new point to the marked list
         let x = e.offsetX;
@@ -281,6 +296,7 @@
         series[activeSeries].push([x, y])
         addPointToUiList(x, y);
         redrawSeries(); // redraw
+        recalcPoly();
     }
 
 
@@ -293,17 +309,17 @@
         sq.fillRect(x - w / 2, y - h / 2, w, h);
     }
 
-    var seriesBtn = document.getElementById("addSeries");
-    seriesBtn.addEventListener("click", e => {
-        alert("Multiple Series disabled for now");
-        return ;
-        activeSeries += 1;
-        series.push(new Array());
-        var pl = document.getElementById("pointlist");
-        var div = document.createElement('div');
-        div.id="series" + (series.length - 1);
-        pl.appendChild(div);
-    }  );
+    // var seriesBtn = document.getElementById("addSeries");
+    // seriesBtn.addEventListener("click", e => {
+    //     alert("Multiple Series disabled for now");
+    //     return ;
+    //     activeSeries += 1;
+    //     series.push(new Array());
+    //     var pl = document.getElementById("pointlist");
+    //     var div = document.createElement('div');
+    //     div.id="series" + (series.length - 1);
+    //     pl.appendChild(div);
+    // }  );
 
     function zoomTo(x,y, factor=1) {
 
@@ -454,5 +470,8 @@
     });
 
 
+
+    document.getElementById("showHideCalib").addEventListener('click', (e) => { toggleClass("calibrate", "hidden")});
     document.getElementById('filebrowsed').addEventListener('change', readImage, false);
+    document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); })
 
