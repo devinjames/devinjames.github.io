@@ -1,0 +1,41 @@
+#canvas {
+    cursor: crosshair;
+    display: inline-block;
+}
+#pointlist{
+    display: inline-block;
+    vertical-align: top;
+    border: solid 1px #000;
+}
+#seriesList {
+    width: 50px;
+    display: inline-block;
+    background-color: aqua;
+}
+#filebrowsed {
+    display: block;
+
+}
+#resizeW {
+    display: inline-block;
+    height: 100%;
+    width: 3px;
+    cursor: ew-resize;
+    background-color: black;
+}
+.label {
+    display: inline-block;
+}
+.value {
+    display: inline-block;
+}
+.activeBtn {
+    background-color: red;
+    color: #fff;
+}
+.point {
+    width: 100%;
+}
+.button {
+    display: inline-block;
+}
