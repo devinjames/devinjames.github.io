@@ -13,9 +13,6 @@
     var datum = {x: null, y: null}
     var chartWidth = window.width * 0.75;
     var chartHeight = window.height * 0.75;
-    var scaleX = new Array([322, 461, 4, 6]); // x1, x2, axis1, axis2
-    var scaleY = new Array([406, 348, 40, 20]); // y1, y2, axis1, axis2
-		// note that scaleY are transformed where the lowest y is at the bottom instead of the top
     var series = new Array(new Array());
     var showDecimals = 2;
     var calibrations = new Array({x0: 0, y0: 0, v_x0: 0, v_y0: 0, x1: 0, y1: 0, v_x1: 0, v_y1: 0});
@@ -406,6 +403,8 @@
                 break;
             case 2: // 2 - set datum
                 setDatum(e.offsetX, e.offsetY);
+                toggleClass("point1status", "-missing");
+                toggleClass("point1status", "+set");
                 toggleClass("setDatum0btn", "-activeBtn");
                 setMode(0);
                 setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
@@ -429,14 +428,25 @@
     document.getElementById('setDatum0div').addEventListener("click", () => { setMode(2); toggleClass("setDatum0btn", "+activeBtn")});
     // document.getElementById('calibrateYscale0').addEventListener("click", () => { setMode(3); toggleClass("calibrateYscale0", "+activeBtn") });
     // document.getElementById('calibrateXscale0').addEventListener("click", () => { setMode(4); toggleClass("calibrateXscale0", "+activeBtn") });
-    document.getElementById('markPoints0').addEventListener("click", () => { setMode(1); clearButtons(); toggleClass("markPoints0", "+activeBtn") });
+    document.getElementById('markPoints0').addEventListener("click", () => {
+        if (mode == 1) {
+            setMode(0);
+            clearButtons();
+        } else {
+            setMode(1); clearButtons(); toggleClass("markPoints0", "+activeBtn");
+        }
+    });
     document.getElementById("setCalib1").addEventListener('click', (e) => {
         console.log(document.getElementById("calib1valueX").value);
-        setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
+        setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
     });
     document.getElementById("setCalib2").addEventListener('click', (e) => {
         console.log(document.getElementById("calib2valueX").value);
         setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  document.getElementById("calib2valueY").value);
+        toggleClass("calib2valueX", "-missing");
+        toggleClass("calib2valueY", "-missing");
+        toggleClass("point2status", "-missing");
+        toggleClass("point2status", "+set");
     });
     document.getElementById("selectPoint2").addEventListener("click", (e) => {
         toggleClass("selectPoint2", "+activeBtn")

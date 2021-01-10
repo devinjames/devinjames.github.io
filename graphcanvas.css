@@ -35,7 +35,7 @@
     display: inline-block;
 }
 .activeBtn {
-    background-color: red;
+    background-color: magenta;
     color: #fff;
 }
 .point {
@@ -45,6 +45,16 @@
     display: inline-block;
 }
 .calibHeader {
+    background-color: cornflowerblue;
+    color: #000;
+}
+.missing {
     font-weight: bold;
-    background-color:cornflowerblue;
+    background-color: red !important;
+    color: #fff;
+}
+.set {
+    background-color: darkgreen;
+    color: #fff;
+    font-weight: normal;
 }
