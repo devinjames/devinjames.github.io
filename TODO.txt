@@ -5,11 +5,14 @@ v1
 --
 [x] fix current scaling issue
 [x] extend keypress to set datum and calibration points as well
+[ ] add clearCalbration function which resets the ui elements and clears the calibration table, erases the datum, etc
 [ ] on load load the default state of datum and scale into the ui
-[ ] Show image scale proportionately if it's larger than the canvas
-[ ] Logic for image and window sizes
+[ ] small images are stretched (adjust the zoomScale factor based on the native sizes compared to canvas size, use a factor of 2 of wahtever that ratio is)
+[ ] give the user power to make the canvas bigger
+[ ] ensure images loaded with diff aspect ratios will work
 [ ] Scaling edge-cases https://stackoverflow.com/questions/21961839/simulation-background-size-cover-in-canvas/21961894#21961894
 [ ] User selection for colors
+[ ] large images seem to work, do more testing
 [ ] refactor everything
 [ ] recomment
 

@@ -186,6 +186,10 @@ var drawDatum = function(x, y) {
 
 var drawZoomBox = function(x,y) {
     // draw the zoombox on the canvas
+
+    if (!document.getElementById("showZoom").checked)
+        return;
+
     let canv = document.getElementById("canvas")
     var c = canvas.getContext("2d")
     var boxSize = 250;
@@ -407,7 +411,7 @@ var drawSquareMarker = function (x, y, color, w = 10, h = 10) {
 
 
 
-function readImage(el) {
+function loadNewImage(el) {
     // read image from user and display it
     console.log("changing image");
     let fileobj = el.target.files[0];
@@ -419,6 +423,7 @@ function readImage(el) {
         console.log(e.target.result);
         image.src = e.target.result;
         image.onload = function () {
+            canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         }
 
@@ -498,6 +503,7 @@ var handleClick = function (e) {
 
             break;
         case 3: // 3 add calibration point 2
+            toggleClass("selectPoint2", "-activeBtn");
             setCalibrationXYpixels(activeSeries, 1, e.offsetX, e.offsetY);
             break;
         case 4: // 4 calibrate x scale
@@ -517,13 +523,15 @@ canvas.addEventListener("mouseout", (e) => {
 });
 canvas.addEventListener("click", handleClick)
 document.getElementById('setDatum0div').addEventListener("click", () => { setMode(2); toggleClass("setDatum0btn", "+activeBtn")});
-document.getElementById('markPoints0').addEventListener("click", () => {
+document.getElementById('markPoints0').addEventListener("click", (e) => {
     if (mode == 1) {
         setMode(0);
         clearButtons();
     } else {
         setMode(1); clearButtons(); toggleClass("markPoints0", "+activeBtn");
     }
+    window.focus();
+
 });
 document.getElementById("setCalib1").addEventListener('click', (e) => {
     console.log(document.getElementById("calib1valueX").value);
@@ -538,11 +546,11 @@ document.getElementById("setCalib2").addEventListener('click', (e) => {
     toggleClass("point2status", "+set");
 });
 document.getElementById("selectPoint2").addEventListener("click", (e) => {
-    toggleClass("selectPoint2", "+activeBtn")
     setMode(3);
+    toggleClass("selectPoint2", "+activeBtn")
 });
 document.getElementById("showHideCalib").addEventListener('click', (e) => { toggleClass("calibrate", "hidden")});
-document.getElementById('filebrowsed').addEventListener('change', readImage, false);
+document.getElementById('filebrowsed').addEventListener('change', loadNewImage, false);
 document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); });
 document.getElementById("increasePoly").addEventListener('click', () => {polyDegree += 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
 document.getElementById("decreasePoly").addEventListener('click', () => {polyDegree -= 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
@@ -607,3 +615,10 @@ window.addEventListener("keydown", (e) => {
 
     }
     );
+
+    window.onload = function() {
+        document.getElementById("calib2valueX").value = calibrations[0].v_x1;
+        document.getElementById("calib2valueY").value = calibrations[0].v_y1;
+        document.getElementById("calibPoint2").innerText = calibrations[0].x1 + ", " + calibrations[0].y1;
+        updateCalibrationUI();
+    }

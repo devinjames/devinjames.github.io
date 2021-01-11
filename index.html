@@ -15,6 +15,9 @@
             <div class="value">No title</div>
         </div> -->
         <div class="row">
+            <input type="checkbox" name="showZoom" id="showZoom" checked="true"><label for="showZoom">Show Magnifier</label>
+        </div>
+        <div class="row">
             <div class="label">Datum: </div>
             <div class="value" id="datum0">Not set</div>
             <div class="button" id="setDatum0div"><button id="setDatum0btn">Set Datum</button></div>
@@ -38,7 +41,8 @@
 </div>
 <div id="calibrate">
     <div>
-        <div id="point1status" class="calibHeader missing">Point 1:</div>
+        <div id="calibStatus" class="calibHeader set">Chart calibrated</div>
+        <div id="point1status" class="calibHeader set">Point 1:</div>
         <div id="calibPoint1" class="value">Uses Datum</div>
         <div id="point2entry">
             <div>Pixel Location: <div class="label" id="point1pixel">N/A</div>
@@ -52,18 +56,18 @@
         <!-- <div class="button"><button id="z">Select Point</button></div> -->
     </div>
     <div>
-        <div id="point2status" class="calibHeader missing">Point 2:</div>
+        <div id="point2status" class="calibHeader set">Point 2:</div>
         <div id="calibPoint2" class="value">Not set</div>
         <div class="button"><button id="selectPoint2">Select Point</button></div>
         <div id="point2entry">
             <div>Pixel Location: <div class="label" id="point2pixel">N/A</div></div>
             <div>Measured:</div>
-            X-Value: <input type="text" name="" id="calib2valueX" class="missing" value="0">
-            Y-Value: <input type="text" name="" id="calib2valueY" class="missing" value="0">
+            X-Value: <input type="text" name="" id="calib2valueX" class="" value="">
+            Y-Value: <input type="text" name="" id="calib2valueY" class="" value="">
             <button id="setCalib2">Set Point</button>
         </div>
     </div>
-    <div>
+    <div style="display: none;">
         <div class="calibHeader">
             Results
         </div>
