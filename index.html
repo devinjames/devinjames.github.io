@@ -80,22 +80,28 @@
 
 <div id="regressionBox">
     <div>Polynomial Regression</div>
-    <label for="showRegression"><input type="checkbox" name="showRegression" id="showRegression">PLOT</label>
+    <label for="showRegression"><input type="checkbox" name="showRegression" checked="true" id="showRegression">PLOT</label>
     <div>Degree: <span id="polyDegreeValue">3</span> <button id="increasePoly">+</button> / <button id="decreasePoly">-</button></div>
-    <div id="deg3poly"></div><a href="#" id="plotRegression">Plot regression</a>
+    <div id="deg3poly"></div>
+    <div><a href="#" id="plotRegression">Plot regression</a></div>
     <div>Prediction Value @ X=<input id="predictInput" value="4"></div>
     <div id="prediction"></div>
 
 </div>
 <div id="notes">
     <pre>
-    NOTE: Single clicks in the chart only.
+    TIPS:
+    * Single clicks in the chart only.
+    * Use the arrows and "enter" to move by pixel when calibrating the chart or settings points
+    * Use +/- keys to change the zoom factor of the marking window
+
 
     How to use this tool:
     <span>1. Load your graph</span>
     <span>2. Set the datum</span>
     <span>3. Set a known calibration point</span>
-    <span>4. mark points that you want to capture</span>
+    <span>4. Select "mark points" and calibrate the chart against some points from your curve.</span>
+    <span>5. Adjust regression degree until it works for you</span>
     </pre>
 
 </div>

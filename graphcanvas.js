@@ -342,8 +342,20 @@ var addPointToUiList = function (x, y) {
 
 var buildEquation = function(terms) {
     let out = "";
+    console.log(terms[0]);
+    if (isNaN(terms[0])) {
+        return "Select two or more points first";
+    }
     for (let i = terms.length - 1; i >= 0; i--) {
-        out += terms[i].toFixed(2).toString() + "x^" + (i - 1).toString();
+        out += terms[i].toFixed(2).toString();
+        if (i > 1) {
+            out += "x^" + i.toString();
+        } else if (i == 1) {
+            out += "x";
+        }
+        if (i > 0) {
+            out += " + ";
+        }
     }
     return out;
 
@@ -360,7 +372,7 @@ var recalcPoly = function() {
     var p = new window.poly(data, polyDegree);
     polyResult = p.getTerms();
     document.getElementById("deg3poly").innerText = buildEquation(polyResult);
-    document.getElementById("prediction").innerText = p.predictY(polyResult, document.getElementById("predictInput").value);
+    document.getElementById("prediction").innerText = "Y = " + p.predictY(polyResult, document.getElementById("predictInput").value).toFixed(2);
 }
 
 var markPoint = function (e) {
@@ -471,6 +483,9 @@ var handleClick = function (e) {
             break;
         case 1: // 1 - mark points in series
             markPoint(e);
+            // if (document.getElementById("showRegression").checked) {
+            //     drawRegression();
+            // }
             break;
         case 2: // 2 - set datum
             setDatum(e.offsetX, e.offsetY);
@@ -480,6 +495,7 @@ var handleClick = function (e) {
             setMode(0);
             setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
             redrawUiPointList();
+
             break;
         case 3: // 3 add calibration point 2
             setCalibrationXYpixels(activeSeries, 1, e.offsetX, e.offsetY);
@@ -530,6 +546,7 @@ document.getElementById('filebrowsed').addEventListener('change', readImage, fal
 document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); });
 document.getElementById("increasePoly").addEventListener('click', () => {polyDegree += 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
 document.getElementById("decreasePoly").addEventListener('click', () => {polyDegree -= 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
+document.getElementById("showRegression").addEventListener("click", (e) => { if (e.target.checked) { recalcPoly(); drawRegression(); }});
 document.getElementById("plotRegression").addEventListener("click", () => { recalcPoly(); drawRegression(); });
 window.addEventListener("keydown", (e) => {
 

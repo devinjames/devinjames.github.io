@@ -21,6 +21,9 @@
     display: block;
 
 }
+#deg3poly {
+    background-color: yellow;
+}
 #resizeW {
     display: inline-block;
     height: 100%;
