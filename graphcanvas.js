@@ -1,3 +1,7 @@
+/*
+Copyright 2021 Devin Sawatzky
+github.com/devinjames
+*/
 
 var canvas = document.getElementById("canvas"),
 ctx = canvas.getContext("2d");
@@ -14,7 +18,7 @@ var datum = {x: 40, y: 435}
 var chartWidth = window.width * 0.75;
 var chartHeight = window.height * 0.75;
 var series = new Array(new Array());
-var showDecimals = 2;
+var sigFigs = 2;
 var calibrations = new Array({
     x0: 40,
     y0: 435,
@@ -31,16 +35,22 @@ var mode = 0;   // clickmode for canvas
 var zoomRatio = 3;
 var crossXY = [];
 
+var colors = {
+    regressionPoint: "magenta",
+    markedPoint: "darkgreen",
+    hightlightedPoint: "red",
+    crosshair: "black",
+    zoomBox: "black",
+    datum: "red"
+}
+
+
 
 // initiate the default graph
 var image = new Image();
 image.src = "./scalegraph-resized.png";
 
-var imageRescaled = image.cloneNode();
-imageRescaled.height = image.naturalHeight * 2;
-imageRescaled.width = image.naturalWidth * 2;
-
-// Make sure the image is loaded first otherwise nothing will draw.
+// Draw the image on the canvas
 image.onload = function () {
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 }
@@ -55,16 +65,20 @@ var getScale = function() {
     return {x: dx, y: dy};
 }
 
+var refreshGraph = function() {
+    /*
+        TODO:  Populate all the show/hide logic in one place
+    */
+}
+
 var drawRegression = function() {
-    // TODO: retrace the regression so it can be visualized
-    console.log("plotting regression")
+    /*
+        Graphs the regression formulated from the marked points
+    */
     for (let x = datum.x; x < canvas.width; x++) {
         let y = new window.poly(polyResult, polyDegree).predictY(polyResult, transformPoint(x, 0).x);
-        // console.log("x,y=" + x +", "+ y);
         let pt = transformPoint(x, y, true);
-        // console.log("x,y=" + x +", "+ pt.y);
-        drawSquareMarker(x, pt.y, "magenta", 2, 2);
-
+        drawSquareMarker(x, pt.y, colors.regressionPoint, 2, 2);
     }
 }
 
@@ -154,13 +168,13 @@ var drawDatum = function(x, y) {
 
     // draw circle
     c.beginPath();
-    c.strokeStyle = "red";
+    c.strokeStyle = colors.datum;
     c.arc(x, y, r, 0, Math.PI * 2);
     c.stroke();
 
     // draw se arc
     c.beginPath();
-    c.fillStyle = "red";
+    c.fillStyle = colors.datum;
     c.moveTo(x,y);
     c.lineTo(x + r, y);
     c.arc(x, y, r, 0, Math.PI/2);
@@ -170,7 +184,7 @@ var drawDatum = function(x, y) {
 
     // draw nw arc
     c.beginPath();
-    c.filleStyle = "red";
+    c.fillStyle = colors.datum;
     c.moveTo(x, y);
     c.lineTo(x - r, y);
     c.arc(x, y, r, Math.PI , Math.PI * 2 * 0.75);
@@ -179,9 +193,9 @@ var drawDatum = function(x, y) {
     c.fill();
 
 
-
+    // return to black?
     c.strokeStyle = "black";
-    c.filleStyle = "black";
+    c.fillStyle = "black";
 }
 
 var drawZoomBox = function(x,y) {
@@ -215,7 +229,7 @@ var drawZoomBox = function(x,y) {
 
     // TODO: redraw the marks inside the previewer?
 
-    c.strokeStyle = "black"
+    c.strokeStyle = colors.zoomBox;
 
 
     c.beginPath();
@@ -250,7 +264,7 @@ var drawCrosshair = function (e, xOveride=null, yOveride=null) {
 
     clearGraph();
     crosshairs.beginPath();
-    crosshairs.strokeStyle = "black";
+    crosshairs.strokeStyle = colors.crosshair;
 
     // vertical line
     crosshairs.moveTo(x, 0);
@@ -263,16 +277,16 @@ var drawCrosshair = function (e, xOveride=null, yOveride=null) {
     crosshairs.stroke();
 
     // redraw everything else as the cursor moves
-    redrawSeries();
+    drawSeries();
     drawDatum(datum.x, datum.y);
     drawZoomBox(crossXY[0], crossXY[1]);
 }
 
-var redrawSeries = function () {
+var drawSeries = function () {
     // draw all the marked datapoints
     for (i=0; i < series.length; i++) {
         for (ii = 0; ii < series[i].length; ii++) {
-            drawSquareMarker(series[i][ii][0], series[i][ii][1], seriesColors[i])
+            drawSquareMarker(series[i][ii][0], series[i][ii][1], colors.markedPoint)
         }
     }
 }
@@ -310,7 +324,7 @@ var addPointToUiList = function (x, y) {
 
     let p = transformPoint(x, y);
     let it = document.createElement('span');
-    it.innerText = p.x.toFixed(showDecimals) + ", " + p.y.toFixed(showDecimals) + " - "
+    it.innerText = p.x.toFixed(sigFigs) + ", " + p.y.toFixed(sigFigs) + " - "
     div.appendChild(it);
 
     let a = document.createElement('a');
@@ -332,10 +346,10 @@ var addPointToUiList = function (x, y) {
         }
         redrawUiPointList();
         clearGraph();
-        redrawSeries();
+        drawSeries();
     });
     a.addEventListener('mouseover', (e) => {
-        redrawSeries();
+        drawSeries();
         drawSquareMarker(e.target.getAttribute("data-x"), e.target.getAttribute("data-y"), "red");
     });
     // a.addEventListener('mouseout', (e) => { clearGraph(); });
@@ -386,7 +400,7 @@ var markPoint = function (e) {
     console.log("x,y=" + x + "," + y);
     series[activeSeries].push([x, y])
     addPointToUiList(x, y);
-    redrawSeries(); // redraw
+    drawSeries(); // redraw
     recalcPoly();
 }
 
@@ -517,6 +531,10 @@ var handleClick = function (e) {
 canvas.addEventListener("mousemove", drawCrosshair);
 canvas.addEventListener("mouseout", (e) => {
     clearGraph();
+    if (mode == 1) {
+        // redraw the series if
+        drawSeries();
+    }
     if (document.getElementById("showRegression").checked) {
         drawRegression();
     }
@@ -526,9 +544,16 @@ document.getElementById('setDatum0div').addEventListener("click", () => { setMod
 document.getElementById('markPoints0').addEventListener("click", (e) => {
     if (mode == 1) {
         setMode(0);
+        clearGraph();
         clearButtons();
+        if (document.getElementById("showRegression").checked)
+            drawRegression();
+
     } else {
-        setMode(1); clearButtons(); toggleClass("markPoints0", "+activeBtn");
+        setMode(1);
+        clearButtons();
+        toggleClass("markPoints0", "+activeBtn");
+        drawSeries();
     }
     window.focus();
 
@@ -554,7 +579,7 @@ document.getElementById('filebrowsed').addEventListener('change', loadNewImage, 
 document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); });
 document.getElementById("increasePoly").addEventListener('click', () => {polyDegree += 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
 document.getElementById("decreasePoly").addEventListener('click', () => {polyDegree -= 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
-document.getElementById("showRegression").addEventListener("click", (e) => { if (e.target.checked) { recalcPoly(); drawRegression(); }});
+document.getElementById("showRegression").addEventListener("click", (e) => { if (e.target.checked) { recalcPoly(); drawRegression(); } else { clearGraph(); } } );
 document.getElementById("plotRegression").addEventListener("click", () => { recalcPoly(); drawRegression(); });
 window.addEventListener("keydown", (e) => {
 
@@ -571,8 +596,10 @@ window.addEventListener("keydown", (e) => {
         zoomRatio -= 0.25;
         clearGraph();
         drawZoomBox(crossXY[0], crossXY[1]);
-
-    } else if (e.key == "ArrowUp") {
+    } else if (e.key == "z") {
+        document.getElementById('showZoom').checked = !document.getElementById('showZoom').checked;
+    }
+     else if (e.key == "ArrowUp") {
         crossXY[1] -= 1;
         e.preventDefault();
         drawZoomBox(crossXY[0], crossXY[1]);
@@ -595,7 +622,7 @@ window.addEventListener("keydown", (e) => {
     } else if (e.key == "Enter") {
         if (mode == 1) {
             series[activeSeries].push([crossXY[0], crossXY[1]]);
-            redrawSeries();
+            drawSeries();
             redrawUiPointList();
         } else if (mode == 2) {
             setDatum(crossXY[0], crossXY[1]);

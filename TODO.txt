@@ -9,7 +9,9 @@ v1
 [ ] on load load the default state of datum and scale into the ui
 [ ] small images are stretched (adjust the zoomScale factor based on the native sizes compared to canvas size, use a factor of 2 of wahtever that ratio is)
 [ ] sig figs regression prefixes
+[ ] populate the refreshGraph function
 [ ] reset datum and calibration on upload image
+[ ] layer inconsisency for markers and regressions on listner events (point list and mouseover/mouseout of canvas)
 [ ] show datum immediately after setting it
 [ ] show marker when setting calibration point
 [ ] warn user if calibration point is too close to datum (x/y axis)?
@@ -18,7 +20,6 @@ v1
 [ ] Scaling edge-cases https://stackoverflow.com/questions/21961839/simulation-background-size-cover-in-canvas/21961894#21961894
 [ ] User selection for colors (crosshairs, datum, markers, highlighted marker)
 [ ] large images seem to work, do more testing
-
 
 v2
 --

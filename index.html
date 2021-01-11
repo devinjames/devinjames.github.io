@@ -1,19 +1,13 @@
 <html>
 <head>
-    <title>Visual Regression</title>
+    <title>Visual Graph Regression</title>
 </head>
 
 <canvas id="canvas" mousemove="drawCrosshair" mouseout=""></canvas>
 <!-- <div id="resizeW"></div> -->
 
-
-
 <div id="pointlist">
     <div class="seriesBlock">
-        <!-- <div class="row">
-            <div class="label">Title: </div>
-            <div class="value">No title</div>
-        </div> -->
         <div class="row">
             <input type="checkbox" name="showZoom" id="showZoom" checked="true"><label for="showZoom">Show Magnifier</label>
         </div>
@@ -23,16 +17,6 @@
             <div class="button" id="setDatum0div"><button id="setDatum0btn">Set Datum</button></div>
             <div><button id="showHideCalib">Show/hide Calibration</button></div>
         </div>
-        <!-- <div class="row">
-            <div class="label">Scale: </div>
-            <div class="value">Uncalibrated</div>
-            <div class="button"><button id="calibrateXYscale0">Calibrate</button></div>
-        </div> -->
-        <!-- <div class="row">
-            <div class="label">Y-Scale: </div>
-            <div class="value">Uncalibrated</div>
-            <div class="button"><button id="calibrateXscale0">Calibrate X-scale</button></div>
-        </div> -->
         <div class="row">
             <div class="button"><button id="markPoints0">Mark Points</button></div>
         </div>
@@ -52,8 +36,6 @@
             Y-Value: <input type="text" name="" id="calib1valueY" value="0">
             <button id="setCalib1">Set Point</button>
         </div>
-        <!-- <div class="button"><button id="z">Use Datum</button></div> -->
-        <!-- <div class="button"><button id="z">Select Point</button></div> -->
     </div>
     <div>
         <div id="point2status" class="calibHeader set">Point 2:</div>
@@ -110,17 +92,9 @@
 
 </div>
 Select Graph File: <input type="file" id="filebrowsed">
-
-
 <!-- <div><button id="addSeries">Add series</button></div> -->
 
 <!-- <div><button>Export as CSV</button></div> -->
-<!--
-<div>
-    X: <input type="text" value="pointX">
-    Y: <input type="text" value="pointY">
-</div> -->
-
 
 <script src="graphcanvas.js"></script>
 <script src="PolynomialRegression.js"></script>
