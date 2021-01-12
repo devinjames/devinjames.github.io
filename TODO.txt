@@ -5,17 +5,23 @@ v1
 --
 [x] fix current scaling issue
 [x] extend keypress to set datum and calibration points as well
-[ ] add clearCalbration function which resets the ui elements and clears the calibration table, erases the datum, etc
-[ ] on load load the default state of datum and scale into the ui
+[ ] Set datum y-value isn’t working -- investigate when a user sets a non 0,0 datum and how that affects the calculated points
+[ ] Draw a frame around the canvas & make it resizable live
+[ ] Add pdf support
+[ ] Move the datum button the point 1 calibration menu
+[ ] Change sig figs for regression
+[ ] Remove pixel locations, nobody cares ;)
 [ ] small images are stretched (adjust the zoomScale factor based on the native sizes compared to canvas size, use a factor of 2 of wahtever that ratio is)
-[ ] sig figs regression prefixes
-[ ] populate the refreshGraph function
 [ ] reset datum and calibration on upload image
-[ ] layer inconsisency for markers and regressions on listner events (point list and mouseover/mouseout of canvas)
 [ ] show datum immediately after setting it
 [ ] show marker when setting calibration point
-[ ] warn user if calibration point is too close to datum (x/y axis)?
-[ ] give the user power to make the canvas bigger
+
+[ ] Don’t allow +/- to change zoom when zoombox is not active (i.e. mouse not over canvas, zoombox button not checked)
+[ ] Mouseover points should highlight them, not just mouseover the X
+[ ] Add event listener when default canvas state no graph to click to load a graph
+[ ] Remove default as graph
+[ ] on load load the default state of datum and scale into the ui
+[ ] layer inconsisency for markers and regressions on listner events (point list and mouseover/mouseout of canvas)
 [ ] ensure images loaded with diff aspect ratios will work
 [ ] Scaling edge-cases https://stackoverflow.com/questions/21961839/simulation-background-size-cover-in-canvas/21961894#21961894
 [ ] User selection for colors (crosshairs, datum, markers, highlighted marker)
@@ -23,6 +29,10 @@ v1
 
 v2
 --
+[ ] add clearCalbration function which resets the ui elements and clears the calibration table, erases the datum, etc
+[ ] populate the refreshGraph function
 [ ] refactor everything
 [ ] recomment
 [ ] improve ui
+[ ] warn user if calibration point is too close to datum (x/y axis)?
+[ ] Add multiple series

@@ -48,7 +48,7 @@ var colors = {
 
 // initiate the default graph
 var image = new Image();
-image.src = "./scalegraph-resized.png";
+image.src = "./data/scalegraph-resized.png";
 
 // Draw the image on the canvas
 image.onload = function () {
@@ -520,7 +520,7 @@ var handleClick = function (e) {
             toggleClass("selectPoint2", "-activeBtn");
             setCalibrationXYpixels(activeSeries, 1, e.offsetX, e.offsetY);
             break;
-        case 4: // 4 calibrate x scale
+        case 4: // 4 resizing canvas
             // toggleClass("calibrateXscale0", "activeBtn");
             break;
 
@@ -528,7 +528,7 @@ var handleClick = function (e) {
 }
 
 // set all eventListners  up
-canvas.addEventListener("mousemove", drawCrosshair);
+canvas.addEventListener("mousemove", (e) => { drawCrosshair(e); e.stopPropagation(); });
 canvas.addEventListener("mouseout", (e) => {
     clearGraph();
     if (mode == 1) {
@@ -583,7 +583,7 @@ document.getElementById("showRegression").addEventListener("click", (e) => { if 
 document.getElementById("plotRegression").addEventListener("click", () => { recalcPoly(); drawRegression(); });
 window.addEventListener("keydown", (e) => {
 
-    if (e.key == "+") {
+    if (e.key == "+" || e.key == "=") {
         console.log("zoom ratio increase");
         zoomRatio += 0.25;
         clearGraph();
@@ -643,6 +643,77 @@ window.addEventListener("keydown", (e) => {
     }
     );
 
+    let resizeCanvas = function(e) {
+        console.log('moving');
+        canvas.height = e.clientY - canvas.offsetTop;
+        // canvas.width = e.clientX - canvas.offsetLeft;
+
+    }
+
+
+    document.getElementById("canvasBorder").addEventListener("mousedown", (e) => {
+        console.log('mousedown in border');
+
+        console.log("clientY = " + e.clientY);
+        console.log("offsetHeight = " + e.target.offsetHeight);
+
+        if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2 && e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+            console.log("caught the click!")
+            setMode(4);
+            window.addEventListener('mousemove', resizeCanvas);
+            canvas.addEventListener('mousemove', resizeCanvas);
+        } else if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+            console.log("caught the click!")
+            setMode(4);
+            window.addEventListener('mousemove', resizeCanvas);
+            canvas.addEventListener('mousemove', resizeCanvas);
+        } else if (e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+            console.log("caught the click!")
+            setMode(4);
+            window.addEventListener('mousemove', resizeCanvas);
+            canvas.addEventListener('mousemove', resizeCanvas);
+        }
+        //  else {
+            //     // console.log('remove resize');
+            //     // toggleClass("canvasBorder", "-nsresize")
+            // }
+        });
+
+    document.getElementById("canvasBorder").addEventListener("mouseout", (e) => {
+        toggleClass('canvasBorder', "-nsresize");
+        toggleClass('canvasBorder', "-ewresize");
+    });
+    document.getElementById("canvasBorder").addEventListener("mousemove", (e) => {
+        if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) && e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"])) { // 4 for border pixels
+            toggleClass("canvasBorder", "+seresize");
+        } else if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+            toggleClass("canvasBorder", "+nsresize");
+        } else if (e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) {
+            toggleClass("canvasBorder", "+ewresize")
+        }
+    });
+
+
+    document.getElementById("canvasBorder").addEventListener("mouseup", (e) => {
+        console.log('mouseup in border');
+        window.removeEventListener('mousemove', resizeCanvas);
+        canvas.removeEventListener('mousemove', resizeCanvas);
+    });
+
+    // document.getElementById("canvasBorder").addEventListener("mousemove", (e) => {
+    //     console.log('mousemove in border');
+
+    //     // TODO: se quadrant must go first
+    //     console.log(e.offsetX)
+    //     if (e.offsetX > canvas.width) {
+    //         console.log("east edge")
+    //     } else if (e.offsetY > canvas.height) {
+    //         console.log("bottom edge")
+    //     }
+    // });
+
+
+    // keep this at the bottom, this is init stuff for the sample chart
     window.onload = function() {
         document.getElementById("calib2valueX").value = calibrations[0].v_x1;
         document.getElementById("calib2valueY").value = calibrations[0].v_y1;

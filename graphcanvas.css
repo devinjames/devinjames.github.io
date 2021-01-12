@@ -2,6 +2,20 @@
     cursor: crosshair;
     display: inline-block;
 }
+.seresize {
+    cursor: se-resize;
+}
+.nsresize {
+    cursor: ns-resize;
+}
+.ewresize {
+    cursor: ew-resize;
+}
+#canvasBorder {
+    border: solid 3px #000;
+    width: auto;
+    display: inline-block;
+}
 #pointlist{
     display: inline-block;
     vertical-align: top;
