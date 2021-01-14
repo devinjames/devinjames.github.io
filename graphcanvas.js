@@ -10,13 +10,13 @@ crosshairs = canvas.getContext("2d");
 canvas.width = 800;
 canvas.height = 468;
 
-var seriesColors = ["green", "pink", "blue", "red", "yellow"];
+var prevCanvas = {height: canvas.height, width: canvas.width }; // for managing resizing
+
+// var seriesColors = ["green", "pink", "blue", "red", "yellow"];
 var activeSeries = 0;
-var xOffsets = new Array();
-var yOffsets = new Array();
 var datum = {x: 40, y: 435}
-var chartWidth = window.width * 0.75;
-var chartHeight = window.height * 0.75;
+// var chartWidth = window.width * 0.75;
+// var chartHeight = window.height * 0.75;
 var series = new Array(new Array());
 var sigFigs = 2;
 var calibrations = new Array({
@@ -29,7 +29,7 @@ var calibrations = new Array({
     v_x1: 4,
     v_y1: 120
 }); // added some defaults for this graph
-var polyResult = null;
+var polyResult = [];
 var polyDegree = 4;
 var mode = 0;   // clickmode for canvas
 var zoomRatio = 3;
@@ -65,6 +65,29 @@ var getScale = function() {
     return {x: dx, y: dy};
 }
 
+var recalculateLandedPoints = function() {
+    let dh = canvas.height / prevCanvas.height;
+    let dw = canvas.width / prevCanvas.width;
+
+    prevCanvas.height = canvas.height;
+    prevCanvas.width = canvas.width;
+
+
+    setDatum(datum.x * dw, datum.y * dh);
+
+    for (let i = 0; i < series[activeSeries].length; i++) {
+        series[activeSeries][i][0] *= series[activeSeries][i][0]
+        series[activeSeries][i][1] *= series[activeSeries][i][1]
+    }
+
+    calibrations.x0 = datum.x
+    calibrations.y0 = datum.y
+
+    calibrations.x1 *= dw
+    calibrations.y1 *= dh
+
+}
+
 var refreshGraph = function() {
     /*
         TODO:  Populate all the show/hide logic in one place
@@ -89,8 +112,8 @@ var readDatum = function() {
 
 var updateCalibrationUI = function() {
     // update the calibration pointss on the ui
-    document.getElementById("point1pixel").innerText =  datum.x + ", " + datum.y;
-    document.getElementById("point2pixel").innerText = calibrations[activeSeries].x1 + ", " + calibrations[activeSeries].y1;
+    // document.getElementById("point1pixel").innerText =  datum.x + ", " + datum.y;
+    // document.getElementById("point2pixel").innerText = calibrations[activeSeries].x1 + ", " + calibrations[activeSeries].y1;
     document.getElementById("calibdx").innerText = getScale().x;
     document.getElementById("calibdy").innerText = getScale().y;
     redrawUiPointList();
@@ -151,7 +174,7 @@ var setDatum = function(x, y) {
     console.log("Setting datum")
     datum.x = x;
     datum.y = y;
-    document.getElementById("datum0").innerText = x + ", " + y;
+    // document.getElementById("datum0").innerText = x + ", " + y;
     return;
 
 }
@@ -359,22 +382,42 @@ var addPointToUiList = function (x, y) {
 }
 
 var buildEquation = function(terms) {
-    let out = "";
+    let out = "Y = ";
     console.log(terms[0]);
     if (isNaN(terms[0])) {
         return "Select two or more points first";
     }
     for (let i = terms.length - 1; i >= 0; i--) {
-        out += terms[i].toFixed(2).toString();
-        if (i > 1) {
-            out += "x^" + i.toString();
-        } else if (i == 1) {
-            out += "x";
+        let term = parseFloat(terms[i]);
+
+        console.log("Term = ".concat(term));
+
+
+        if (term < 1) {
+            term = term.toExponential(2).toString();
+            console.log(term.toString());
+        } else {
+            term = term.toFixed(3);
         }
+
+        console.log("Formatted =".concat(term));
+        console.log("Str =".concat(term.toString()));
+
+        out = out.concat(term);
+        console.log(out);
+
+
+        if (i > 1) {
+            out = out.concat("x^".concat(i.toString()));
+        } else if (i == 1) {
+            out = out.concat("x");
+        }
+
         if (i > 0) {
-            out += " + ";
+            out = out.concat(" + ");
         }
     }
+    console.log(out);
     return out;
 
 }
@@ -390,7 +433,7 @@ var recalcPoly = function() {
     var p = new window.poly(data, polyDegree);
     polyResult = p.getTerms();
     document.getElementById("deg3poly").innerText = buildEquation(polyResult);
-    document.getElementById("prediction").innerText = "Y = " + p.predictY(polyResult, document.getElementById("predictInput").value).toFixed(2);
+    document.getElementById("regressionPredictY").innerText = "Y = " + p.predictY(polyResult, document.getElementById("predictInput").value).toFixed(2);
 }
 
 var markPoint = function (e) {
@@ -514,6 +557,7 @@ var handleClick = function (e) {
             setMode(0);
             setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
             redrawUiPointList();
+            drawDatum(datum.x, datum.y);
 
             break;
         case 3: // 3 add calibration point 2
@@ -528,7 +572,7 @@ var handleClick = function (e) {
 }
 
 // set all eventListners  up
-canvas.addEventListener("mousemove", (e) => { drawCrosshair(e); e.stopPropagation(); });
+canvas.addEventListener("mousemove", (e) => { drawCrosshair(e); e.stopPropagation(); if (mode == 2) { drawDatum(e.offsetX, e.offsetY)} });
 canvas.addEventListener("mouseout", (e) => {
     clearGraph();
     if (mode == 1) {
@@ -540,7 +584,7 @@ canvas.addEventListener("mouseout", (e) => {
     }
 });
 canvas.addEventListener("click", handleClick)
-document.getElementById('setDatum0div').addEventListener("click", () => { setMode(2); toggleClass("setDatum0btn", "+activeBtn")});
+document.getElementById('setDatum0div').addEventListener("click", (e) => { setMode(2); toggleClass("setDatum0btn", "+activeBtn"); e.target.blur(); });
 document.getElementById('markPoints0').addEventListener("click", (e) => {
     if (mode == 1) {
         setMode(0);
@@ -555,12 +599,13 @@ document.getElementById('markPoints0').addEventListener("click", (e) => {
         toggleClass("markPoints0", "+activeBtn");
         drawSeries();
     }
-    window.focus();
+    e.target.blur();
 
 });
 document.getElementById("setCalib1").addEventListener('click', (e) => {
     console.log(document.getElementById("calib1valueX").value);
     setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
+    e.target.blur();
 });
 document.getElementById("setCalib2").addEventListener('click', (e) => {
     console.log(document.getElementById("calib2valueX").value);
@@ -569,6 +614,7 @@ document.getElementById("setCalib2").addEventListener('click', (e) => {
     toggleClass("calib2valueY", "-missing");
     toggleClass("point2status", "-missing");
     toggleClass("point2status", "+set");
+    e.target.blur();
 });
 document.getElementById("selectPoint2").addEventListener("click", (e) => {
     setMode(3);
@@ -644,7 +690,7 @@ window.addEventListener("keydown", (e) => {
     );
 
     let resizeCanvas = function(e) {
-        console.log('moving');
+        console.log('resizing');
         canvas.height = e.clientY - canvas.offsetTop;
         // canvas.width = e.clientX - canvas.offsetLeft;
 
@@ -693,11 +739,16 @@ window.addEventListener("keydown", (e) => {
         }
     });
 
+document.getElementById("clearPoints").addEventListener("click", (e) => { series[activeSeries] = []; document.getElementById("series0").innerHTML = "" })
+
 
     document.getElementById("canvasBorder").addEventListener("mouseup", (e) => {
         console.log('mouseup in border');
+        console.log("finalized resize");
         window.removeEventListener('mousemove', resizeCanvas);
         canvas.removeEventListener('mousemove', resizeCanvas);
+        recalculateLandedPoints();
+
     });
 
     // document.getElementById("canvasBorder").addEventListener("mousemove", (e) => {

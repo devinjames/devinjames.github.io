@@ -14,13 +14,14 @@
             <input type="checkbox" name="showZoom" id="showZoom" checked="true"><label for="showZoom">Show Magnifier</label>
         </div>
         <div class="row">
-            <div class="label">Datum: </div>
-            <div class="value" id="datum0">Not set</div>
-            <div class="button" id="setDatum0div"><button id="setDatum0btn">Set Datum</button></div>
+            <!-- <div class="label">Datum: </div> -->
+            <!-- <div class="value" id="datum0">Not set</div> -->
+
             <div><button id="showHideCalib">Show/hide Calibration</button></div>
         </div>
         <div class="row">
-            <div class="button"><button id="markPoints0">Mark Points</button></div>
+            <div class="button"><button id="markPoints0">Mark Curve Points</button></div>
+            <div class="button"><button id="clearPoints">Clear Markers</button></div>
         </div>
         <div id="series0" class="seriesList"></div>
     </div>
@@ -30,9 +31,10 @@
         <div id="calibStatus" class="calibHeader set">Chart calibrated</div>
         <div id="point1status" class="calibHeader set">Point 1:</div>
         <div id="calibPoint1" class="value">Uses Datum</div>
+        <div class="button" id="setDatum0div"><button id="setDatum0btn">Set Datum</button></div>
         <div id="point2entry">
-            <div>Pixel Location: <div class="label" id="point1pixel">N/A</div>
-            </div>
+            <!-- <div>Pixel Location: <div class="label" id="point1pixel">N/A</div> -->
+
             <div>Measured:</div>
             X-Value: <input type="text" name="" id="calib1valueX" value="0">
             Y-Value: <input type="text" name="" id="calib1valueY" value="0">
@@ -44,7 +46,7 @@
         <div id="calibPoint2" class="value">Not set</div>
         <div class="button"><button id="selectPoint2">Select Point</button></div>
         <div id="point2entry">
-            <div>Pixel Location: <div class="label" id="point2pixel">N/A</div></div>
+            <!-- <div>Pixel Location: <div class="label" id="point2pixel">N/A</div></div> -->
             <div>Measured:</div>
             X-Value: <input type="text" name="" id="calib2valueX" class="" value="">
             Y-Value: <input type="text" name="" id="calib2valueY" class="" value="">
@@ -73,7 +75,7 @@
     <div id="deg3poly"></div>
     <div><a href="#" id="plotRegression">Plot regression</a></div>
     <div>Prediction Value @ X=<input id="predictInput" value="4"></div>
-    <div id="prediction"></div>
+    <div id="regressionPredictY"></div>
 
 </div>
 <div id="notes">

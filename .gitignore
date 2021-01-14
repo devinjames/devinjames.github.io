@@ -1,3 +1,4 @@
 *.url
 *.code-workspace
 priv
+.vscode/launch.json
