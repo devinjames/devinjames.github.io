@@ -44,6 +44,13 @@ var colors = {
     datum: "red"
 }
 
+const modes = {
+    NOTHING: 0,
+    MARK_POINT: 1,
+    SET_DATUM: 2,
+    SET_CALIB: 3
+}
+
 
 
 // initiate the default graph
@@ -496,7 +503,7 @@ function loadNewImage(el) {
 
 var setMode = function(newMode) {
     // sets the current clickmode for the canvas
-    clearButtons();
+    // clearButtons();
     console.log("mode changed to " + newMode);
     mode = newMode;
     return;
@@ -515,10 +522,12 @@ var toggleClass = function(id, className) {
         classList.add(className.substring(1,className.length));
         return;
     } else if (modifier == "-") {
+        console.log("Removing " + className.substring(1, className.length));
         classList.remove(className.substring(1,className.length));
         return;
     }
 
+    console.log("Toggling " + className.substring(1, className.length));
     if (classList.contains(className)) {
         classList.remove(className);
     } else {
@@ -540,6 +549,7 @@ var clearButtons = function() {
 
 var handleClick = function (e) {
     // handler for canvas clicks
+    e.target.blur()
     switch (mode) {
         case 0: // 0 - nothing
             break;
@@ -554,15 +564,16 @@ var handleClick = function (e) {
             toggleClass("point1status", "-missing");
             toggleClass("point1status", "+set");
             toggleClass("setDatum0btn", "-activeBtn");
-            setMode(0);
+            setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
             redrawUiPointList();
             drawDatum(datum.x, datum.y);
-
+            // e.target.blur();
             break;
         case 3: // 3 add calibration point 2
             toggleClass("selectPoint2", "-activeBtn");
             setCalibrationXYpixels(activeSeries, 1, e.offsetX, e.offsetY);
+            // e.target.blur();
             break;
         case 4: // 4 resizing canvas
             // toggleClass("calibrateXscale0", "activeBtn");
@@ -571,11 +582,20 @@ var handleClick = function (e) {
     }
 }
 
-// set all eventListners  up
-canvas.addEventListener("mousemove", (e) => { drawCrosshair(e); e.stopPropagation(); if (mode == 2) { drawDatum(e.offsetX, e.offsetY)} });
+
+// draw when mouse is over canvas
+canvas.addEventListener("mousemove", (e) => {
+        drawCrosshair(e);
+        e.stopPropagation();
+        if (mode == modes.SET_DATUM) {
+            drawDatum(e.offsetX, e.offsetY)
+        }
+    });
+
+// draw when mouse leaves canvas
 canvas.addEventListener("mouseout", (e) => {
     clearGraph();
-    if (mode == 1) {
+    if (mode == modes.MARK_POINT) {
         // redraw the series if
         drawSeries();
     }
@@ -583,18 +603,29 @@ canvas.addEventListener("mouseout", (e) => {
         drawRegression();
     }
 });
+
+// handle all canvas clicks
+// uses the 'mode' global variable to determine what happens
 canvas.addEventListener("click", handleClick)
-document.getElementById('setDatum0div').addEventListener("click", (e) => { setMode(2); toggleClass("setDatum0btn", "+activeBtn"); e.target.blur(); });
+
+// set datum button click
+document.getElementById('setDatum0div').addEventListener("click", (e) => {
+    setMode(modes.SET_DATUM);
+    toggleClass("setDatum0btn", "+activeBtn");
+    e.target.blur();
+});
+
+// click mark points button
 document.getElementById('markPoints0').addEventListener("click", (e) => {
-    if (mode == 1) {
-        setMode(0);
+    if (mode == modes.MARK_POINT) {
+        setMode(modes.NOTHING);
         clearGraph();
         clearButtons();
         if (document.getElementById("showRegression").checked)
             drawRegression();
 
     } else {
-        setMode(1);
+        setMode(modes.MARK_POINT);
         clearButtons();
         toggleClass("markPoints0", "+activeBtn");
         drawSeries();
@@ -602,11 +633,15 @@ document.getElementById('markPoints0').addEventListener("click", (e) => {
     e.target.blur();
 
 });
+
+// set calibration point button
 document.getElementById("setCalib1").addEventListener('click', (e) => {
     console.log(document.getElementById("calib1valueX").value);
     setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
     e.target.blur();
 });
+
+// set calibration point 2 button
 document.getElementById("setCalib2").addEventListener('click', (e) => {
     console.log(document.getElementById("calib2valueX").value);
     setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  document.getElementById("calib2valueY").value);
@@ -616,10 +651,16 @@ document.getElementById("setCalib2").addEventListener('click', (e) => {
     toggleClass("point2status", "+set");
     e.target.blur();
 });
+
+// selection second point button
 document.getElementById("selectPoint2").addEventListener("click", (e) => {
-    setMode(3);
+    console.log("Setting pt2 by click");
+    setMode(modes.SET_CALIB);
     toggleClass("selectPoint2", "+activeBtn")
+    e.target.blur();
 });
+
+
 document.getElementById("showHideCalib").addEventListener('click', (e) => { toggleClass("calibrate", "hidden")});
 document.getElementById('filebrowsed').addEventListener('change', loadNewImage, false);
 document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); });
@@ -627,6 +668,9 @@ document.getElementById("increasePoly").addEventListener('click', () => {polyDeg
 document.getElementById("decreasePoly").addEventListener('click', () => {polyDegree -= 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
 document.getElementById("showRegression").addEventListener("click", (e) => { if (e.target.checked) { recalcPoly(); drawRegression(); } else { clearGraph(); } } );
 document.getElementById("plotRegression").addEventListener("click", () => { recalcPoly(); drawRegression(); });
+
+
+// handle all keypresses
 window.addEventListener("keydown", (e) => {
 
     if (e.key == "+" || e.key == "=") {
@@ -666,28 +710,37 @@ window.addEventListener("keydown", (e) => {
         drawZoomBox(crossXY[0], crossXY[1]);
         drawCrosshair(e, crossXY[0], crossXY[1]);
     } else if (e.key == "Enter") {
-        if (mode == 1) {
+        console.log("Enter pressed, mode = ".concat(mode));
+        if (mode == modes.MARK_POINT) {
             series[activeSeries].push([crossXY[0], crossXY[1]]);
             drawSeries();
             redrawUiPointList();
-        } else if (mode == 2) {
+        } else if (mode == modes.SET_DATUM) {
             setDatum(crossXY[0], crossXY[1]);
             toggleClass("point1status", "-missing");
             toggleClass("point1status", "+set");
             toggleClass("setDatum0btn", "-activeBtn");
-            setMode(0);
+            setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 0, crossXY[0], crossXY[1]);
             redrawUiPointList();
             drawDatum();
 
-        } else if (mode == 3) {
+        } else if (mode == modes.SET_CALIB) {
+            setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 1, crossXY[0], crossXY[1]);
+            toggleClass("selectPoint2", "-activeBtn");
         }
     }
     // console.log(e);
 
     }
     );
+
+
+
+/***********************
+    RESIZING FUNCTIONS
+************************/
 
     let resizeCanvas = function(e) {
         console.log('resizing');
@@ -763,7 +816,12 @@ window.addEventListener("keydown", (e) => {
             //     }
             // });
 
-document.getElementById("clearPoints").addEventListener("click", (e) => { series[activeSeries] = []; document.getElementById("series0").innerHTML = "" })
+document.getElementById("clearPoints").addEventListener("click", (e) => {
+    series[activeSeries] = [];
+    document.getElementById("series0").innerHTML = "";
+    clearButtons();
+    setMode(modes.NOTHING);
+});
 
     // keep this at the bottom, this is init stuff for the sample chart
     window.onload = function() {

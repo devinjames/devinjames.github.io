@@ -39,6 +39,12 @@ SCALING
 [ ] Scaling edge-cases https://stackoverflow.com/questions/21961839/simulation-background-size-cover-in-canvas/21961894#21961894
 [ ] large images seem to work, do more testing
 
+REFACTOR
+[ ] normalize use of getting datum by function
+
+PUMP SPECIFIC
+[ ] add affinity law scaling and other pump data entry things such as speed
+
 
 v2
 --
