@@ -390,7 +390,7 @@ var buildEquation = function(terms) {
     for (let i = terms.length - 1; i >= 0; i--) {
         let term = parseFloat(terms[i]);
 
-        console.log("Term = ".concat(term));
+        // console.log("Term = ".concat(term));
 
 
         if (term < 1) {
@@ -400,11 +400,11 @@ var buildEquation = function(terms) {
             term = term.toFixed(3);
         }
 
-        console.log("Formatted =".concat(term));
-        console.log("Str =".concat(term.toString()));
+        // console.log("Formatted =".concat(term));
+        // console.log("Str =".concat(term.toString()));
 
         out = out.concat(term);
-        console.log(out);
+        // console.log(out);
 
 
         if (i > 1) {
@@ -440,7 +440,7 @@ var markPoint = function (e) {
     // add a new point to the marked list
     let x = e.offsetX;
     let y = e.offsetY;
-    console.log("x,y=" + x + "," + y);
+    console.log("Marking new point x,y=" + x + "," + y);
     series[activeSeries].push([x, y])
     addPointToUiList(x, y);
     drawSeries(); // redraw
@@ -511,7 +511,7 @@ var toggleClass = function(id, className) {
     var modifier = className.substring(0, 1);
 
     if (modifier == "+") {
-        console.log("Adding " + className.substring(1, className.length - 1));
+        console.log("Adding " + className.substring(1, className.length));
         classList.add(className.substring(1,className.length));
         return;
     } else if (modifier == "-") {
@@ -697,72 +697,73 @@ window.addEventListener("keydown", (e) => {
     }
 
 
-    document.getElementById("canvasBorder").addEventListener("mousedown", (e) => {
-        console.log('mousedown in border');
+    // document.getElementById("canvasBorder").addEventListener("mousedown", (e) => {
+    //     console.log('mousedown in border');
 
-        console.log("clientY = " + e.clientY);
-        console.log("offsetHeight = " + e.target.offsetHeight);
+    //     console.log("clientY = " + e.clientY);
+    //     console.log("offsetHeight = " + e.target.offsetHeight);
 
-        if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2 && e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
-            console.log("caught the click!")
-            setMode(4);
-            window.addEventListener('mousemove', resizeCanvas);
-            canvas.addEventListener('mousemove', resizeCanvas);
-        } else if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
-            console.log("caught the click!")
-            setMode(4);
-            window.addEventListener('mousemove', resizeCanvas);
-            canvas.addEventListener('mousemove', resizeCanvas);
-        } else if (e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
-            console.log("caught the click!")
-            setMode(4);
-            window.addEventListener('mousemove', resizeCanvas);
-            canvas.addEventListener('mousemove', resizeCanvas);
-        }
-        //  else {
-            //     // console.log('remove resize');
-            //     // toggleClass("canvasBorder", "-nsresize")
-            // }
-        });
+    //     if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2 && e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+    //         console.log("caught the click!")
+    //         setMode(4);
+    //         window.addEventListener('mousemove', resizeCanvas);
+    //         canvas.addEventListener('mousemove', resizeCanvas);
+    //     } else if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+    //         console.log("caught the click!")
+    //         setMode(4);
+    //         window.addEventListener('mousemove', resizeCanvas);
+    //         canvas.addEventListener('mousemove', resizeCanvas);
+    //     } else if (e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+    //         console.log("caught the click!")
+    //         setMode(4);
+    //         window.addEventListener('mousemove', resizeCanvas);
+    //         canvas.addEventListener('mousemove', resizeCanvas);
+    //     }
+    //     //  else {
+    //         //     // console.log('remove resize');
+    //         //     // toggleClass("canvasBorder", "-nsresize")
+    //         // }
+    //     });
 
-    document.getElementById("canvasBorder").addEventListener("mouseout", (e) => {
-        toggleClass('canvasBorder', "-nsresize");
-        toggleClass('canvasBorder', "-ewresize");
-    });
-    document.getElementById("canvasBorder").addEventListener("mousemove", (e) => {
-        if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) && e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"])) { // 4 for border pixels
-            toggleClass("canvasBorder", "+seresize");
-        } else if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
-            toggleClass("canvasBorder", "+nsresize");
-        } else if (e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) {
-            toggleClass("canvasBorder", "+ewresize")
-        }
-    });
-
-document.getElementById("clearPoints").addEventListener("click", (e) => { series[activeSeries] = []; document.getElementById("series0").innerHTML = "" })
-
-
-    document.getElementById("canvasBorder").addEventListener("mouseup", (e) => {
-        console.log('mouseup in border');
-        console.log("finalized resize");
-        window.removeEventListener('mousemove', resizeCanvas);
-        canvas.removeEventListener('mousemove', resizeCanvas);
-        recalculateLandedPoints();
-
-    });
+    // document.getElementById("canvasBorder").addEventListener("mouseout", (e) => {
+    //     toggleClass('canvasBorder', "-nsresize");
+    //     toggleClass('canvasBorder', "-ewresize");
+    // });
 
     // document.getElementById("canvasBorder").addEventListener("mousemove", (e) => {
+    //     if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) && e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"])) { // 4 for border pixels
+    //         toggleClass("canvasBorder", "+seresize");
+    //     } else if (e.clientY >= e.target.offsetHeight - parseInt(getComputedStyle(e.target)["border-width"]) * 2) { // 4 for border pixels
+    //         toggleClass("canvasBorder", "+nsresize");
+    //     } else if (e.clientX >= e.target.offsetWidth - parseInt(getComputedStyle(e.target)["border-width"]) * 2) {
+    //         toggleClass("canvasBorder", "+ewresize")
+    //     }
+    // });
+
+
+
+    // document.getElementById("canvasBorder").addEventListener("mouseup", (e) => {
+        //     console.log('mouseup in border');
+        //     console.log("finalized resize");
+//     window.removeEventListener('mousemove', resizeCanvas);
+//     canvas.removeEventListener('mousemove', resizeCanvas);
+//     recalculateLandedPoints();
+
+// });
+
+// document.getElementById("canvasBorder").addEventListener("mousemove", (e) => {
     //     console.log('mousemove in border');
 
     //     // TODO: se quadrant must go first
     //     console.log(e.offsetX)
     //     if (e.offsetX > canvas.width) {
-    //         console.log("east edge")
-    //     } else if (e.offsetY > canvas.height) {
-    //         console.log("bottom edge")
-    //     }
-    // });
+        //         console.log("east edge")
+        //     } else if (e.offsetY > canvas.height) {
+            //         console.log("bottom edge")
+            //     }
+            // });
 
+document.getElementById("clearPoints").addEventListener("click", (e) => { series[activeSeries] = []; document.getElementById("series0").innerHTML = "" })
 
     // keep this at the bottom, this is init stuff for the sample chart
     window.onload = function() {
