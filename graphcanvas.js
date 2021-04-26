@@ -823,6 +823,58 @@ document.getElementById("clearPoints").addEventListener("click", (e) => {
     setMode(modes.NOTHING);
 });
 
+window.addEventListener('paste', (event) => {
+    let paste = event.clipboardData
+    event.preventDefault();
+    let objectUrl = URL.createObjectURL(file);
+    let fr = new FileReader();
+    fr.onload = function (e) {
+        console.log("loaded image");
+        image = new Image();
+        console.log(e.target.result);
+        image.src = e.target.result;
+        image.onload = function () {
+            canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
+        clearGraph = function () {
+            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        }
+
+        let ctx = document.getElementById('canvas').getContext("2d");
+        ctx.drawImage(image, 0, 0);
+    };
+    fr.readAsDataURL(objectUrl);
+});
+
+// window.addEventListener("paste", async function (e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     let file = e.clipboardData.items[0].getAsFile();
+//     let objectUrl = URL.createObjectURL(file);
+//     let fr = new FileReader();
+//     fr.onload = function (e) {
+//         console.log("loaded image");
+//         image = new Image();
+//         console.log(e.target.result);
+//         image.src = e.target.result;
+//         image.onload = function () {
+//             canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
+//             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+//         }
+
+//         clearGraph = function () {
+//             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+//         }
+
+//         let ctx = document.getElementById('canvas').getContext("2d");
+//         ctx.drawImage(image, 0, 0);
+//     };
+//     fr.readAsDataURL(objectUrl);
+
+// });
+
     // keep this at the bottom, this is init stuff for the sample chart
     window.onload = function() {
         document.getElementById("calib2valueX").value = calibrations[0].v_x1;
