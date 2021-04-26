@@ -749,6 +749,10 @@ window.addEventListener("keydown", (e) => {
 
     }
 
+    let pasteImageToCanvas = function (e) {
+        
+    }
+
 
     // document.getElementById("canvasBorder").addEventListener("mousedown", (e) => {
     //     console.log('mousedown in border');
@@ -823,57 +827,36 @@ document.getElementById("clearPoints").addEventListener("click", (e) => {
     setMode(modes.NOTHING);
 });
 
+
 window.addEventListener('paste', (event) => {
-    let paste = event.clipboardData
-    event.preventDefault();
-    let objectUrl = URL.createObjectURL(file);
-    let fr = new FileReader();
-    fr.onload = function (e) {
-        console.log("loaded image");
-        image = new Image();
-        console.log(e.target.result);
-        image.src = e.target.result;
-        image.onload = function () {
-            canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
-            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-        }
+    /* 
+        Draw pasted image onto the canvas or 
+     */
+    let paste = event.clipboardData.items;
+ 
+    for (let i=0; i < paste.length; i++) {
+        console.log(paste[i]);
+        if (paste[i].type.indexOf("image") !== -1) {
+            event.preventDefault();
+            console.log("found image: " + paste[i].type);
 
-        clearGraph = function () {
-            ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-        }
+            let imageBlob = paste[i].getAsFile(); // creates the blob
 
-        let ctx = document.getElementById('canvas').getContext("2d");
-        ctx.drawImage(image, 0, 0);
-    };
-    fr.readAsDataURL(objectUrl);
+            image = new Image(); 
+
+            image.onload = function () {
+                // canvas and ctx are globally defined
+                canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
+                ctx.drawImage(image, 0, 0, canvas.width, canvas.height);  // draw this image onto the canvas.
+            }
+
+            let URLObj = window.URL || window.webkitURL;
+            let urlBlob = URLObj.createObjectURL(imageBlob);  
+            image.src = urlBlob;
+
+        }
+    }
 });
-
-// window.addEventListener("paste", async function (e) {
-//     e.preventDefault();
-//     e.stopPropagation();
-//     let file = e.clipboardData.items[0].getAsFile();
-//     let objectUrl = URL.createObjectURL(file);
-//     let fr = new FileReader();
-//     fr.onload = function (e) {
-//         console.log("loaded image");
-//         image = new Image();
-//         console.log(e.target.result);
-//         image.src = e.target.result;
-//         image.onload = function () {
-//             canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
-//             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-//         }
-
-//         clearGraph = function () {
-//             ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-//         }
-
-//         let ctx = document.getElementById('canvas').getContext("2d");
-//         ctx.drawImage(image, 0, 0);
-//     };
-//     fr.readAsDataURL(objectUrl);
-
-// });
 
     // keep this at the bottom, this is init stuff for the sample chart
     window.onload = function() {

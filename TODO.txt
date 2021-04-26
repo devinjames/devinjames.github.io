@@ -14,19 +14,23 @@ v1
 CORE
 [ ] Set datum y-value isn’t working -- investigate when a user sets a non 0,0 datum and how that affects the calculated points
 [ ] Add pdf support
-[ ] allow rotation of the image with butons/hotkeys
+[x] Allow paste from clipboard
+[ ] Allow rotation of the image with butons/hotkeys
 
 RESIZING
 [ ] refactor x,y coords in series
 [x] refactor datum
 [x] refactor calibration
 [ ] Draw a frame around the canvas & make it resizable live
+[ ] properly resize canvas on paste
+[ ] add simple buttons to multiply canvas size
 
 UX
 [ ] show x,y location of cursor when moving
 [ ] finish clear series button highlighting stuff
 [ ] reset datum and calibration on upload image
-[ ] show marker when setting calibration point
+[ ] show marker when setting calibration point 
+[ ] show visual canvas marker for the second calibration point (not just datum)
 [ ] layer inconsisency for markers and regressions on listner events (point list and mouseover/mouseout of canvas)
 [ ] Don’t allow +/- to change zoom when zoombox is not active (i.e. mouse not over canvas, zoombox button not checked)
 [ ] Remove default as graph
