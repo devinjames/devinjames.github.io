@@ -836,6 +836,8 @@ document.getElementById("clearPoints").addEventListener("click", (e) => {
     document.getElementById("series0").innerHTML = "";
     clearButtons();
     setMode(modes.NOTHING);
+    recalcPoly();
+    clearGraph();
 });
 
 
