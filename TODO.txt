@@ -36,6 +36,8 @@ UX
 [ ] Remove default as graph
 [ ] on load load the default state of datum and scale into the ui
 [ ] User selection for colors (crosshairs, datum, markers, highlighted marker)
+[x] recalculate calibration points 1 or 2 if setting the pixel x,y occurs after setting the data x,y
+[ ] normalize setCalib1 and setCalib2 with setMode functions
 
 SCALING
 [ ] small images are stretched (adjust the zoomScale factor based on the native sizes compared to canvas size, use a factor of 2 of wahtever that ratio is)
