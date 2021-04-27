@@ -127,15 +127,17 @@ var updateCalibrationUI = function() {
 }
 
 var transformPoint = function(x,y, reverse=false) {
-    // transform a pixel-based x,y into an x,y using the chart axis scales
+    // transform a pixel-based x,y into a scaled x,y using the chart axis scales
     if (reverse) {
-        var ox = (x/getScale().x) + readDatum().x;
-        var oy = (canvas.height - readDatum().y - y/getScale().y);
+        // convert graph points to pixel x,y
+        var ox = ((x- calibrations[activeSeries]["v_x0"])/getScale().x) + readDatum().x;          // TODO: scale this based on datum y-value
+        var oy = (canvas.height - readDatum().y - (y - calibrations[activeSeries]["v_y0"])/getScale().y);
         return { x: ox, y: oy };
 
     }
-    var ox = (x - readDatum().x) * getScale().x;
-    var oy = (canvas.height - y - readDatum().y) * getScale().y;
+    // convert pixel x,y to graph points
+    var ox = (x - readDatum().x) * getScale().x + calibrations[activeSeries]["v_x0"];
+    var oy = (canvas.height - y - readDatum().y) * getScale().y + calibrations[activeSeries]["v_y0"];
     return {x: ox, y: oy};
 }
 
