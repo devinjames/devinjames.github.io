@@ -382,8 +382,10 @@ var addPointToUiList = function (x, y) {
             }
         }
         redrawUiPointList();
+        recalcPoly()
         clearGraph();
         drawSeries();
+        drawRegression();
     });
     a.addEventListener('mouseover', (e) => {
         drawSeries();
