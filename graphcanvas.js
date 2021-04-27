@@ -14,23 +14,28 @@ var prevCanvas = {height: canvas.height, width: canvas.width }; // for managing 
 
 // var seriesColors = ["green", "pink", "blue", "red", "yellow"];
 var activeSeries = 0;
-var datum = {x: 40, y: 435}
+var datum = {x: 35, y: 443}
 // var chartWidth = window.width * 0.75;
 // var chartHeight = window.height * 0.75;
 var series = new Array(new Array());
 var sigFigs = 2;
 var calibrations = new Array({
-    x0: 40,
-    y0: 435,
+    x0: 35,
+    y0: 443,
     v_x0: 0,
     v_y0: 0,
-    x1: 286,
-    y1: 107,
-    v_x1: 4,
-    v_y1: 120
+    x1: 533,
+    y1: 216,
+    v_x1: 12,
+    v_y1: 400
 }); // added some defaults for this graph
+
+// defaults for ./data/poly-3rd-order.png
+series[0] = [ [ 78, 428 ], [ 161, 378 ], [ 244, 302 ], [ 328, 219 ], [ 408, 148 ], [ 494, 111 ], [ 577, 122 ], [ 658, 201 ], [ 742, 371 ] ];
+
+
 var polyResult = [];
-var polyDegree = 4;
+var polyDegree = 3;
 var mode = 0;   // clickmode for canvas
 var zoomRatio = 3;
 var crossXY = [];
@@ -55,7 +60,7 @@ const modes = {
 
 // initiate the default graph
 var image = new Image();
-image.src = "./data/scalegraph-resized.png";
+image.src = "./data/poly-3rd-order.png";
 
 // Draw the image on the canvas
 image.onload = function () {
@@ -127,15 +132,17 @@ var updateCalibrationUI = function() {
 }
 
 var transformPoint = function(x,y, reverse=false) {
-    // transform a pixel-based x,y into an x,y using the chart axis scales
+    // transform a pixel-based x,y into a scaled x,y using the chart axis scales
     if (reverse) {
-        var ox = (x/getScale().x) + readDatum().x;
-        var oy = (canvas.height - readDatum().y - y/getScale().y);
+        // convert graph points to pixel x,y
+        var ox = ((x- calibrations[activeSeries]["v_x0"])/getScale().x) + readDatum().x;          // TODO: scale this based on datum y-value
+        var oy = (canvas.height - readDatum().y - (y - calibrations[activeSeries]["v_y0"])/getScale().y);
         return { x: ox, y: oy };
 
     }
-    var ox = (x - readDatum().x) * getScale().x;
-    var oy = (canvas.height - y - readDatum().y) * getScale().y;
+    // convert pixel x,y to graph points
+    var ox = (x - readDatum().x) * getScale().x + calibrations[activeSeries]["v_x0"];
+    var oy = (canvas.height - y - readDatum().y) * getScale().y + calibrations[activeSeries]["v_y0"];
     return {x: ox, y: oy};
 }
 
@@ -568,11 +575,13 @@ var handleClick = function (e) {
             setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
             redrawUiPointList();
             drawDatum(datum.x, datum.y);
+            recalcPoly();
             // e.target.blur();
             break;
         case 3: // 3 add calibration point 2
             toggleClass("selectPoint2", "-activeBtn");
             setCalibrationXYpixels(activeSeries, 1, e.offsetX, e.offsetY);
+            recalcPoly();
             // e.target.blur();
             break;
         case 4: // 4 resizing canvas
@@ -638,6 +647,7 @@ document.getElementById('markPoints0').addEventListener("click", (e) => {
 document.getElementById("setCalib1").addEventListener('click', (e) => {
     console.log(document.getElementById("calib1valueX").value);
     setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
+    recalcPoly();
     e.target.blur();
 });
 
@@ -645,6 +655,7 @@ document.getElementById("setCalib1").addEventListener('click', (e) => {
 document.getElementById("setCalib2").addEventListener('click', (e) => {
     console.log(document.getElementById("calib2valueX").value);
     setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  document.getElementById("calib2valueY").value);
+    recalcPoly();
     toggleClass("calib2valueX", "-missing");
     toggleClass("calib2valueY", "-missing");
     toggleClass("point2status", "-missing");
@@ -864,4 +875,6 @@ window.addEventListener('paste', (event) => {
         document.getElementById("calib2valueY").value = calibrations[0].v_y1;
         document.getElementById("calibPoint2").innerText = calibrations[0].x1 + ", " + calibrations[0].y1;
         updateCalibrationUI();
+        recalcPoly();
+        drawRegression();
     }

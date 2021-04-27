@@ -74,7 +74,7 @@
     <div>Degree: <span id="polyDegreeValue">3</span> <button id="increasePoly">+</button> / <button id="decreasePoly">-</button></div>
     <div id="deg3poly"></div>
     <div><a href="#" id="plotRegression">Plot regression</a></div>
-    <div>Prediction Value @ X=<input id="predictInput" value="4"></div>
+    <div>Prediction Value @ X=<input id="predictInput" value="10"></div>
     <div id="regressionPredictY"></div>
 
 </div>
@@ -84,6 +84,7 @@
     * Single clicks in the chart only.
     * Use the arrows and "enter" to move by pixel when calibrating the chart or settings points
     * Use +/- keys to change the zoom factor of the marking window
+    * Click anywhere on the page (to set the focus) and press Ctrl+V to paste your clipboard image into the graph
 
 
     How to use this tool:
@@ -107,5 +108,12 @@ Select Graph File: <input type="file" id="filebrowsed">
 </script>
 <link rel="stylesheet" href='graphcanvas.css' ></link>
 
-The latest version of this project can be found at: <a href="https://github.com/devinjames/graphregression">https://github.com/devinjames/graphregression</a>
+<pre>
+    What's new:
+    2021-04-06
+    [+] Added Ctrl+V to paste
+    [!] Fixed datum at non 0,0 coordinate corrected
+</pre>
+
+Latest version available at <a href="https://www.github.com/devinjames/graphregression">github.com/devinjames/graphregression</a>
 </html>
