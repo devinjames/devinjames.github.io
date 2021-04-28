@@ -101,6 +101,55 @@ var recalculateLandedPoints = function() {
 
 }
 
+var checkStepOK = function() {
+        if (datum.x > 0 && datum.y > 0) {
+            toggleClass('calib1bad', "+hide");
+            toggleClass('calib1ok', "-hide");
+        } else {
+            toggleClass('calib1bad', "+hide");
+            toggleClass('calib1ok', "-hide");
+        }
+
+        let x = calibrations[activeSeries].v_x0;
+        let y = calibrations[activeSeries].v_y0;
+
+        if (parseInt(x).isNaN  || parseInt(y).isNaN) {
+            toggleClass('calib2bad', "+hide");
+            toggleClass('calib2ok', "-hide");
+        } else {
+            toggleClass('calib2bad', "+hide");
+            toggleClass('calib2ok', "-hide");
+        }            
+
+        if (calibrations[activeSeries].x1 > 0 && calibrations[activeSeries].y1 > 0) {
+            toggleClass('calib3bad', "+hide");
+            toggleClass('calib3ok', "-hide");
+        } else {
+            toggleClass('calib3bad', "+hide");
+            toggleClass('calib3ok', "-hide");
+        }            
+
+        x = calibrations[activeSeries].v_x1;
+        y = calibrations[activeSeries].v_y1;
+
+        if (parseInt(x).isNaN || parseInt(y).isNaN) {
+            toggleClass('calib4bad', "+hide");
+            toggleClass('calib4ok', "-hide");
+        } else {
+            toggleClass('calib4bad', "+hide");
+            toggleClass('calib4ok', "-hide");
+        }                  
+
+        if (series[activeSeries].length < 2) {
+            toggleClass('calib5bad', "+hide");
+            toggleClass('calib5ok', "-hide");
+        } else {
+            toggleClass('calib5bad', "+hide");
+            toggleClass('calib5ok', "-hide");
+            
+        }
+}
+
 var refreshGraph = function() {
     /*
         TODO:  Populate all the show/hide logic in one place
@@ -400,6 +449,17 @@ var redrawUiPointList = function() {
         const pt = series[activeSeries][i];
         addPointToUiList(pt[0], pt[1]);
     }
+    if (series[activeSeries].length < 2) {
+        toggleClass("step5status", "+missing");
+        toggleClass("step5status", "-set");            
+        toggleClass("calib5bad", "-hide");    
+        toggleClass("calib5ok", "+hide");        
+    } else {
+        toggleClass("step5status", "-missing");
+        toggleClass("step5status", "+set");            
+        toggleClass("calib5bad", "+hide");    
+        toggleClass("calib5ok", "-hide");        
+    }
 }
 
 var addPointToUiList = function (x, y) {
@@ -616,22 +676,33 @@ var resetEverything = function () {
     toggleCalibrationUI(false);
     setCalibrationXYvalues(activeSeries, 0, 0, 0);
     setCalibrationXYvalues(activeSeries, 1, 0, 0);
-    toggleClass("point1status", "+missing");
-    toggleClass("point1status", "-set");    
-    toggleClass("point2status", "+missing");
-    toggleClass("point2status", "-set");    
+    toggleClass("calib1ok", "+hide");
+    toggleClass("calib1bad", "-hide");
+    toggleClass("calib3ok", "+hide");
+    toggleClass("calib3bad", "-hide");
+    toggleClass("calib5ok", "+hide");
+    toggleClass("calib5bad", "-hide");
+    toggleClass("step1status", "-set");    
+    // toggleClass("step2status", "+missing");
+    // toggleClass("step2status", "-set");    
+    toggleClass("step3status", "+missing");
+    toggleClass("step3status", "-set");    
+    // toggleClass("step4status", "+missing");
+    // toggleClass("step4status", "-set");    
+    toggleClass("step5status", "+missing");
+    toggleClass("step5status", "-set");    
     updateCalibrationUI();
 }
 
 let toggleCalibrationUI = function(ok) {
     if (ok) {
-        document.getElementById("calibStatus").innerText = "CHART CALIBRATED";
-        toggleClass("calibStatus", "-missing");
-        toggleClass("calibStatus", "+set");            
+        // document.getElementById("calibStatus").innerText = "CHART CALIBRATED";
+        // toggleClass("calibStatus", "-missing");
+        // toggleClass("calibStatus", "+set");            
     } else {
-        document.getElementById("calibStatus").innerText = "CHART NOT CALIBRATED";
-        toggleClass("calibStatus", "+missing");
-        toggleClass("calibStatus", "-set");            
+        // document.getElementById("calibStatus").innerText = "CHART NOT CALIBRATED";
+        // toggleClass("calibStatus", "+missing");
+        // toggleClass("calibStatus", "-set");            
     }
 }
 
@@ -653,14 +724,16 @@ var handleClick = function (e) {
             break;
         case 1: // 1 - mark points in series
             markPoint(e);
+            toggleClass("step5status", "-missing");
+            toggleClass("step5status", "+set");          
             // if (document.getElementById("showRegression").checked) {
             //     drawRegression();
             // }
             break;
         case 2: // 2 - set datum
             setDatum(e.offsetX, e.offsetY);
-            toggleClass("point1status", "-missing");
-            toggleClass("point1status", "+set");
+            toggleClass("step1status", "-missing");
+            toggleClass("step1status", "+set");
             toggleClass("setDatum0btn", "-activeBtn");
             setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
@@ -677,6 +750,8 @@ var handleClick = function (e) {
             recalcPoly();
             drawCalibMarker(calibrations[activeSeries].x1, calibrations[activeSeries].y1);
             setMode(modes.NOTHING);
+            toggleClass("step3status", "-missing")
+            toggleClass("step3status", "+set")            
             // e.target.blur();
             break;
         case 4: // 4 resizing canvas
@@ -696,6 +771,7 @@ canvas.addEventListener("mousemove", (e) => {
             
         } else if (mode == modes.SET_CALIB) {
             drawCalibMarker(e.offsetX, e.offsetY)
+            checkStepOK();
         }
     });
 
@@ -764,8 +840,8 @@ document.getElementById('markPoints0').addEventListener("click", (e) => {
 // selection second point button
 document.getElementById("selectPoint2").addEventListener("click", (e) => {
     console.log("Setting pt2 by click");
-    setMode(modes.SET_CALIB);
     toggleClass("selectPoint2", "+activeBtn")
+    setMode(modes.SET_CALIB);
     e.target.blur();
 });
 
@@ -826,18 +902,20 @@ window.addEventListener("keydown", (e) => {
             redrawUiPointList();
         } else if (mode == modes.SET_DATUM) {
             setDatum(crossXY[0], crossXY[1]);
-            toggleClass("point1status", "-missing");
-            toggleClass("point1status", "+set");
+            toggleClass("step1status", "-missing");
+            toggleClass("step1status", "+set");
             toggleClass("setDatum0btn", "-activeBtn");
             setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 0, crossXY[0], crossXY[1]);
             redrawUiPointList();
             drawDatum();
-
+            
         } else if (mode == modes.SET_CALIB) {
             setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 1, crossXY[0], crossXY[1]);
-            toggleClass("selectPoint2", "-activeBtn");
+            toggleClass("step3status", "-activeBtn");
+            toggleClass("step3status", "-missing");
+            toggleClass("step3status", "+set");
         }
     }
     // console.log(e);
@@ -967,6 +1045,10 @@ document.getElementById("clearPoints").addEventListener("click", (e) => {
     setMode(modes.NOTHING);
     recalcPoly();
     clearGraph();
+    // toggleClass("step5status", "+missing");
+    toggleClass("step5status", "-set");    
+    toggleClass("calib5bad", "-hide");    
+    toggleClass("calib5ok", "+hide");    
 });
 
 

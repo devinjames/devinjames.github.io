@@ -1,3 +1,7 @@
+body {
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 10pt;
+}
 #canvas {
     cursor: crosshair;
     display: inline-block;
@@ -93,22 +97,33 @@
     display: inline-block;
 }
 .calibHeader {
-    background-color: cornflowerblue;
-    color: #000;
+    background-color: rgb(185, 51, 58);
+    color: #fff;
+    display: flex;
+}
+.calibStatusMarker {
+    margin-left: auto;
 }
 .missing {
-    font-weight: bold;
-    background-color: red !important;
+    /* font-weight: bold; */
+    background-color: rgb(185, 51, 58) !important;
     color: #fff;
 }
 .set {
-    background-color: darkgreen;
-    color: #fff;
+    background-color: rgb(61, 182, 61);
+    color: #000;
     font-weight: normal;
 }
 .hidden {
     display: none !important;
 }
 .header {
-    background-color: rgb(243, 192, 26);
+    background-color: rgb(131, 167, 233);
+    font-size: 11pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 3px 3px 3px 3px;
+}
+.hide {
+    display: none;
 }

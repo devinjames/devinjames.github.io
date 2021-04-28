@@ -28,19 +28,20 @@
             <div class="button"><button id="markPoints0">Mark Curve Points</button></div>
             <div class="button"><button id="clearPoints">Clear Markers</button></div>
         </div> -->
-        <div class="row header">
+        <div class="row header" >
             MARKED POINTS (X, Y)
         </div>
         <div id="series0" class="seriesList"></div>
+        <div class="row" style="text-align: right;">
+            <div class="button"><button id="clearPoints">Clear All Markers</button></div>
+        </div>
     </div>
 </div>
 <div></div>
 
 <div id="calibrate">
         <div id="" class="header r">Chart scale calibration</div>
-        <div id="calibStatus" class="calibHeader set r">Chart calibrated</div>
-
-        <div id="point1status" class="calibHeader set r">Step 1: Mark Datum</div>
+        <div id="step1status" class="calibHeader set r">Step 1: Mark Datum <span id="calib1bad" class="calibStatusMarker hide">❌</span><span id="calib1ok" class="calibStatusMarker">👍</span></div>
 
         <div class="inputRow r">
             <div class="button" id="setDatum0div"><button id="setDatum0btn">Mark Datum</button></div>
@@ -49,14 +50,14 @@
             <div id="calibPoint1" class="value">0, 0</div>
         </div>
             
-        <div id="point1status" class="calibHeader set r">Step 2: Enter chart x,y values at datum</div>
+        <div id="step2status" class="calibHeader set r">Step 2: Enter chart x,y values at datum<span id="calib2bad" class="calibStatusMarker  hide">❌</span><span id="calib2ok" class="calibStatusMarker">👍</span></div>
 
         <div class="inputRow r">
             X = <input type="text" name="" id="calib1valueX" class="smallBox" value="0">
             Y = <input type="text" name="" id="calib1valueY" class="smallBox" value="0">
         </div>
 
-        <div id="point2status" class="calibHeader set r">Step 3: Mark scale calibration-point</div>
+        <div id="step3status" class="calibHeader set r">Step 3: Mark scale calibration-point<span id="calib3bad" class="calibStatusMarker  hide">❌</span><span id="calib3ok" class="calibStatusMarker">👍</span></div>
         
         <div class="inputRow r">
             <div class="button"><button id="selectPoint2">Mark Point</button></div>
@@ -64,17 +65,16 @@
             <div id="calibPoint2" class="value">0, 0</div>
         </div>
 
-        <div id="point2status" class="calibHeader set r">Step 4: Enter chart x,y values at calibration-point</div>
+        <div id="step4status" class="calibHeader set r">Step 4: Enter chart x,y values at calibration-point<span id="calib4bad" class="calibStatusMarker  hide">❌</span><span id="calib4ok" class="calibStatusMarker">👍</span></div>
 
         <div class="inputRow r">
             X = <input type="text" name="" id="calib2valueX" class="smallbox" value="">
             Y = <input type="text" name="" id="calib2valueY" class="smallbox" value="">
         </div>
         
-        <div class="calibHeader set r">Step 5: Mark points on the curve</div>    
+        <div id="step5status" class="calibHeader set r">Step 5: Mark points on the curve<span id="calib5bad" class="calibStatusMarker  hide">❌</span><span id="calib5ok" class="calibStatusMarker">👍</span></div>    
         <div class="inputRow r">
             <div class="button"><button id="markPoints0">Mark Curve Points</button></div>
-            <div class="button"><button id="clearPoints">Clear Markers</button></div>
         </div>        
     </div>
 
