@@ -775,7 +775,7 @@ document.getElementById("predictInput").addEventListener("keyup", (e) => { recal
 document.getElementById("increasePoly").addEventListener('click', () => {polyDegree += 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
 document.getElementById("decreasePoly").addEventListener('click', () => {polyDegree -= 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
 document.getElementById("showRegression").addEventListener("click", (e) => { if (e.target.checked) { recalcPoly(); drawRegression(); } else { clearGraph(); } } );
-document.getElementById("plotRegression").addEventListener("click", () => { recalcPoly(); drawRegression(); });
+// document.getElementById("plotRegression").addEventListener("click", () => { recalcPoly(); drawRegression(); });
 
 
 // handle all keypresses

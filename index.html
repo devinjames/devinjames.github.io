@@ -11,67 +11,75 @@
 
 <div id="pointlist">
     <div class="seriesBlock">
+        <div class="row header">SETTINGS</div>
         <div class="row">
             <input type="checkbox" name="showZoom" id="showZoom" checked="true"><label for="showZoom">Show Magnifier</label>
         </div>
+        <div class="row"><label for="showRegression"><input type="checkbox" name="showRegression" checked="true" id="showRegression">Plot Regression</label></div>            
         <div class="row">
+            &nbsp;
             <!-- <div class="label">Datum: </div> -->
             <!-- <div class="value" id="datum0">Not set</div> -->
             
             <!-- <div><button id="showHideCalib">Show/hide Calibration</button></div> -->
         </div>
         
-        <div class="row">
+        <!-- <div class="row">
             <div class="button"><button id="markPoints0">Mark Curve Points</button></div>
             <div class="button"><button id="clearPoints">Clear Markers</button></div>
-        </div>
+        </div> -->
         <div class="row header">
             MARKED POINTS (X, Y)
         </div>
         <div id="series0" class="seriesList"></div>
     </div>
 </div>
+<div></div>
 
 <div id="calibrate">
-    <div>
-        <div id="calibStatus" class="calibHeader set">Chart calibrated</div>
-        <div id="point1status" class="calibHeader set">Step 1: Mark Datum</div>
+        <div id="" class="header r">Chart scale calibration</div>
+        <div id="calibStatus" class="calibHeader set r">Chart calibrated</div>
 
-        <div class="inputRow">
+        <div id="point1status" class="calibHeader set r">Step 1: Mark Datum</div>
+
+        <div class="inputRow r">
             <div class="button" id="setDatum0div"><button id="setDatum0btn">Mark Datum</button></div>
             
             <div class="label">X,Y = </div>
             <div id="calibPoint1" class="value">0, 0</div>
         </div>
-        <!-- <div id="point2entry"></div> -->
-            <!-- <div>Pixel Location: <div class="label" id="point1pixel">N/A</div> -->
             
-        <div id="point1status" class="calibHeader set">Step 2: Input chart reading at datum</div>
+        <div id="point1status" class="calibHeader set r">Step 2: Enter chart x,y values at datum</div>
 
-        <div class="inputRow">
+        <div class="inputRow r">
             X = <input type="text" name="" id="calib1valueX" class="smallBox" value="0">
             Y = <input type="text" name="" id="calib1valueY" class="smallBox" value="0">
         </div>
-            <!-- <button id="setCalib1">Set Point</button> -->
-        </div>
-        <div id="point2status" class="calibHeader set">Step 3: Mark Calibration Point</div>
+
+        <div id="point2status" class="calibHeader set r">Step 3: Mark scale calibration-point</div>
         
-        <div class="inputRow">
+        <div class="inputRow r">
             <div class="button"><button id="selectPoint2">Mark Point</button></div>
             <div class="label">X,Y = </div>
             <div id="calibPoint2" class="value">0, 0</div>
         </div>
-        <!-- <div id="point2entry"> -->
-        <div id="point2status" class="calibHeader set">Step 3: Input reading at calibration point</div>
-            <!-- <div>Pixel Location: <div class="label" id="point2pixel">N/A</div></div> -->
-            <!-- <div>Associated Chart Reading:</div> -->
-            <div class="inputRow">
+
+        <div id="point2status" class="calibHeader set r">Step 4: Enter chart x,y values at calibration-point</div>
+
+        <div class="inputRow r">
             X = <input type="text" name="" id="calib2valueX" class="smallbox" value="">
             Y = <input type="text" name="" id="calib2valueY" class="smallbox" value="">
-            </div>
-            <!-- <button id="setCalib2">Set Point</button> -->
         </div>
+        
+        <div class="calibHeader set r">Step 5: Mark points on the curve</div>    
+        <div class="inputRow r">
+            <div class="button"><button id="markPoints0">Mark Curve Points</button></div>
+            <div class="button"><button id="clearPoints">Clear Markers</button></div>
+        </div>        
     </div>
+
+
+
     <div style="display: none;">
         <div class="calibHeader">
             Results
@@ -82,20 +90,23 @@
         <div>
             dY = <span id="calibdy">Not set</span>
         </div>
-
+        
     </div>
+
 
 </div>
 
 
 <div id="regressionBox">
-    <div>Polynomial Regression</div>
-    <label for="showRegression"><input type="checkbox" name="showRegression" checked="true" id="showRegression">PLOT</label>
-    <div>Degree: <span id="polyDegreeValue">3</span> <button id="increasePoly">+</button> / <button id="decreasePoly">-</button></div>
-    <div id="deg3poly"></div>
-    <div><a href="#" id="plotRegression">Plot regression</a></div>
-    <div>Prediction Value @ X=<input id="predictInput" value="10"></div>
-    <div id="regressionPredictY"></div>
+    <div class="header r">Polynomial Regression</div>
+    <div class="r">Degree: <span id="polyDegreeValue">3</span> <button id="increasePoly">+</button> / <button id="decreasePoly">-</button></div>
+    <div class="r">&nbsp;</div>
+    <div class="r">Chart formula</div>
+    <div id="deg3poly" class="r">Calibrate chart to see regression formula</div>
+    <!-- <div><a href="#" id="plotRegression">Plot regression</a></div> -->
+    <div class="r">&nbsp;</div>
+    <div class="r">Predicted Value @ X = <input id="predictInput" class="r" value="10"></div>
+    <div id="regressionPredictY" class="r">Y = 0</div>
 
 </div>
 <div id="notes">

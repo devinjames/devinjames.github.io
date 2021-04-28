@@ -20,6 +20,7 @@
     display: inline-block;
     vertical-align: top;
     border: solid 1px #000;
+    min-width: 200px;
 }
 
 #calibrate {
@@ -27,7 +28,7 @@
     vertical-align: top;
     border: solid 1px #000;
     margin: 5px 15px 15px 5px;
-    padding: 2px;
+    padding: 0px;
     width: 400px;
 }
 #seriesList {
@@ -40,7 +41,7 @@
 
 }
 #deg3poly {
-    background-color: yellow;
+    background-color:lightblue;
 }
 #resizeW {
     display: inline-block;
@@ -54,8 +55,11 @@
     border: solid 1px #000;
     width: 500px;
     margin: 5px 15px 15px 5px;
-    padding: 2px;
+    /* padding: 2px; */
 
+}
+.r {
+    padding: 2px;
 }
 .inputRow {
     padding: 5px 5px 5px 5px;
@@ -106,5 +110,5 @@
     display: none !important;
 }
 .header {
-    background-color:goldenrod;
+    background-color: rgb(243, 192, 26);
 }
