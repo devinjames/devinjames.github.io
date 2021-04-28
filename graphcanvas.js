@@ -46,7 +46,8 @@ var colors = {
     hightlightedPoint: "red",
     crosshair: "black",
     zoomBox: "black",
-    datum: "red"
+    datum: "red",
+    calib: "orange"
 }
 
 const modes = {
@@ -193,6 +194,51 @@ var setDatum = function(x, y) {
 
 }
 
+var drawCalibMarker = function(x, y) {
+    // draw the datum on the canvas
+    if (x === null || y === null)  {
+        // console.log("datum not yet set");
+        return;
+    }
+
+    var c = canvas.getContext("2d")
+    let r = 7;
+
+    // draw circle
+    c.beginPath();
+    c.strokeStyle = colors.calib;
+    c.fillStyle = colors.calib;
+    c.arc(x, y, r, 0, Math.PI * 2);
+    c.stroke();
+    c.fill();
+
+    // // draw se arc
+    // c.beginPath();
+    // c.fillStyle = colors.datum;
+    // c.moveTo(x,y);
+    // c.lineTo(x + r, y);
+    // c.arc(x, y, r, 0, Math.PI/2);
+    // c.moveTo(x, y);
+    // c.lineTo(x, y+r)
+    // c.fill();
+
+    // // draw nw arc
+    // c.beginPath();
+    // c.fillStyle = colors.datum;
+    // c.moveTo(x, y);
+    // c.lineTo(x - r, y);
+    // c.arc(x, y, r, Math.PI , Math.PI * 2 * 0.75);
+    // c.moveTo(x, y)
+    // c.lineTo(x, y + r);
+    // c.fill();
+
+
+    // return to black?
+    c.strokeStyle = "black";
+    c.fillStyle = "black";
+}
+
+
 var drawDatum = function(x, y) {
     // draw the datum on the canvas
     if (x === null || y === null)  {
@@ -316,6 +362,7 @@ var drawCrosshair = function (e, xOveride=null, yOveride=null) {
     // redraw everything else as the cursor moves
     drawSeries();
     drawDatum(datum.x, datum.y);
+    drawCalibMarker(calibrations[activeSeries].x1, calibrations[activeSeries].y1)
     drawZoomBox(crossXY[0], crossXY[1]);
 }
 
@@ -356,13 +403,17 @@ var redrawUiPointList = function() {
 
 var addPointToUiList = function (x, y) {
     // add the DOM structure required to allow deletion of a UI datapoint
-    let div = document.createElement('div');
-    div.classList.add("point")
+    let wrapper = document.createElement('div');
+    wrapper.classList.add("pointWrapper")
+
+    let pointDiv = document.createElement('div');
+    pointDiv.classList.add("point")
 
     let p = transformPoint(x, y);
     let it = document.createElement('span');
-    it.innerText = p.x.toFixed(sigFigs) + ", " + p.y.toFixed(sigFigs) + " - "
-    div.appendChild(it);
+    it.innerText = p.x.toFixed(sigFigs) + ", " + p.y.toFixed(sigFigs); // + " - "
+    pointDiv.appendChild(it);
+        
 
     let a = document.createElement('a');
     a.classList.add("pointlink")
@@ -371,6 +422,8 @@ var addPointToUiList = function (x, y) {
     a.href = "#"
     a.innerText = "X"
     var l = series[activeSeries].length;
+
+    
     a.addEventListener('click', (e) => {
         console.log('click');
         // series[activeSeries].splice(l, 1);
@@ -393,8 +446,12 @@ var addPointToUiList = function (x, y) {
     });
     // a.addEventListener('mouseout', (e) => { clearGraph(); });
 
-    div.appendChild(a);
-    document.getElementById('series' + activeSeries).appendChild(div);
+    let closeDiv = document.createElement('div');
+    closeDiv.classList.add('pointclose')
+    closeDiv.appendChild(a);
+    wrapper.appendChild(pointDiv);
+    wrapper.appendChild(closeDiv);
+    document.getElementById('series' + activeSeries).appendChild(wrapper);
 }
 
 var buildEquation = function(terms) {
@@ -491,6 +548,7 @@ function loadNewImage(el) {
     console.log(fileobj);
     let fr = new FileReader();
     fr.onload = function(e) {
+        resetEverything();
         console.log("loaded image");
         image = new Image();
         console.log(e.target.result);
@@ -546,6 +604,36 @@ var toggleClass = function(id, className) {
 
 }
 
+var resetEverything = function () {
+    series[activeSeries] = [];
+    setDatum(0, 0);
+    clearButtons();
+    setMode(modes.NOTHING);
+    recalcPoly();
+    clearGraph();    
+    // drawDatum();
+    toggleCalibrationUI(false);
+    setCalibrationXYvalues(activeSeries, 0, 0, 0);
+    setCalibrationXYvalues(activeSeries, 1, 0, 0);
+    toggleClass("point1status", "+missing");
+    toggleClass("point1status", "-set");    
+    toggleClass("point2status", "+missing");
+    toggleClass("point2status", "-set");    
+    updateCalibrationUI();
+}
+
+let toggleCalibrationUI = function(ok) {
+    if (ok) {
+        document.getElementById("calibStatus").innerText = "CHART CALIBRATED";
+        toggleClass("calibStatus", "-missing");
+        toggleClass("calibStatus", "+set");            
+    } else {
+        document.getElementById("calibStatus").innerText = "CHART NOT CALIBRATED";
+        toggleClass("calibStatus", "+missing");
+        toggleClass("calibStatus", "-set");            
+    }
+}
+
 var clearButtons = function() {
     // clear the toggle status of all ui buttons
     let btns = new Array("setDatum0btn", "markPoints0", "selectPoint2");
@@ -575,6 +663,7 @@ var handleClick = function (e) {
             toggleClass("setDatum0btn", "-activeBtn");
             setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 0, e.offsetX, e.offsetY);
+            document.getElementById("calibPoint1").innerText = calibrations[0].x0 + ", " + calibrations[0].y0;
             redrawUiPointList();
             drawDatum(datum.x, datum.y);
             recalcPoly();
@@ -583,7 +672,10 @@ var handleClick = function (e) {
         case 3: // 3 add calibration point 2
             toggleClass("selectPoint2", "-activeBtn");
             setCalibrationXYpixels(activeSeries, 1, e.offsetX, e.offsetY);
+            document.getElementById("calibPoint2").innerText = calibrations[0].x1 + ", " + calibrations[0].y1;
             recalcPoly();
+            drawCalibMarker(calibrations[activeSeries].x1, calibrations[activeSeries].y1);
+            setMode(modes.NOTHING);
             // e.target.blur();
             break;
         case 4: // 4 resizing canvas
@@ -600,6 +692,9 @@ canvas.addEventListener("mousemove", (e) => {
         e.stopPropagation();
         if (mode == modes.SET_DATUM) {
             drawDatum(e.offsetX, e.offsetY)
+            
+        } else if (mode == modes.SET_CALIB) {
+            drawCalibMarker(e.offsetX, e.offsetY)
         }
     });
 
@@ -645,25 +740,25 @@ document.getElementById('markPoints0').addEventListener("click", (e) => {
 
 });
 
-// set calibration point button
-document.getElementById("setCalib1").addEventListener('click', (e) => {
-    console.log(document.getElementById("calib1valueX").value);
-    setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
-    recalcPoly();
-    e.target.blur();
-});
+// // set calibration point button
+// document.getElementById("setCalib1").addEventListener('click', (e) => {
+//     console.log(document.getElementById("calib1valueX").value);
+//     setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  document.getElementById("calib1valueY").value);
+//     recalcPoly();
+//     e.target.blur();
+// });
 
 // set calibration point 2 button
-document.getElementById("setCalib2").addEventListener('click', (e) => {
-    console.log(document.getElementById("calib2valueX").value);
-    setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  document.getElementById("calib2valueY").value);
-    recalcPoly();
-    toggleClass("calib2valueX", "-missing");
-    toggleClass("calib2valueY", "-missing");
-    toggleClass("point2status", "-missing");
-    toggleClass("point2status", "+set");
-    e.target.blur();
-});
+// document.getElementById("setCalib2").addEventListener('click', (e) => {
+//     console.log(document.getElementById("calib2valueX").value);
+//     setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  document.getElementById("calib2valueY").value);
+//     recalcPoly();
+//     toggleClass("calib2valueX", "-missing");
+//     toggleClass("calib2valueY", "-missing");
+//     toggleClass("point2status", "-missing");
+//     toggleClass("point2status", "+set");
+//     e.target.blur();
+// });
 
 // selection second point button
 document.getElementById("selectPoint2").addEventListener("click", (e) => {
@@ -674,7 +769,7 @@ document.getElementById("selectPoint2").addEventListener("click", (e) => {
 });
 
 
-document.getElementById("showHideCalib").addEventListener('click', (e) => { toggleClass("calibrate", "hidden")});
+// document.getElementById("showHideCalib").addEventListener('click', (e) => { toggleClass("calibrate", "hidden")});
 document.getElementById('filebrowsed').addEventListener('change', loadNewImage, false);
 document.getElementById("predictInput").addEventListener("keyup", (e) => { recalcPoly(); });
 document.getElementById("increasePoly").addEventListener('click', () => {polyDegree += 1; recalcPoly(); document.getElementById("polyDegreeValue").innerText = polyDegree; clearGraph(); drawRegression()});
@@ -833,6 +928,37 @@ window.addEventListener("keydown", (e) => {
             //     }
             // });
 
+document.getElementById("calib1valueX").addEventListener('keyup', (e) => {
+    console.log(e.target.value);
+    setCalibrationXYvalues(activeSeries, 0, e.target.value,  document.getElementById("calib1valueY").value);
+    recalcPoly();
+    // e.target.blur();
+});
+
+document.getElementById("calib1valueY").addEventListener('keyup', (e) => {
+    // console.log(document.getElementById("calib1valueY").value);
+    console.log(e.target.value);
+    setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  e.target.value);
+    recalcPoly();
+    // e.target.blur();
+});
+
+document.getElementById("calib2valueX").addEventListener('keyup', (e) => {
+    // console.log(document.getElementById("calib2valueX").value);
+    console.log(e.target.value);
+    setCalibrationXYvalues(activeSeries, 1, e.target.value,  document.getElementById("calib2valueY").value);
+    recalcPoly();
+    // e.target.blur();
+});
+
+document.getElementById("calib2valueY").addEventListener('keyup', (e) => {
+    // console.log(document.getElementById("calib2valueY").value);
+    console.log(e.target.value);
+    setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  e.target.value);
+    recalcPoly();
+    // e.target.blur();
+});
+
 document.getElementById("clearPoints").addEventListener("click", (e) => {
     series[activeSeries] = [];
     document.getElementById("series0").innerHTML = "";
@@ -860,6 +986,7 @@ window.addEventListener('paste', (event) => {
             image = new Image(); 
 
             image.onload = function () {
+                resetEverything();
                 // canvas and ctx are globally defined
                 canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
                 ctx.drawImage(image, 0, 0, canvas.width, canvas.height);  // draw this image onto the canvas.
@@ -881,4 +1008,5 @@ window.addEventListener('paste', (event) => {
         updateCalibrationUI();
         recalcPoly();
         drawRegression();
+        // resetEverything();
     }

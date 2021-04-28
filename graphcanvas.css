@@ -21,10 +21,14 @@
     vertical-align: top;
     border: solid 1px #000;
 }
+
 #calibrate {
     display: inline-block;
     vertical-align: top;
     border: solid 1px #000;
+    margin: 5px 15px 15px 5px;
+    padding: 2px;
+    width: 400px;
 }
 #seriesList {
     width: 50px;
@@ -46,8 +50,18 @@
     background-color: black;
 }
 #regressionBox {
+    display: inline-block;
     border: solid 1px #000;
     width: 500px;
+    margin: 5px 15px 15px 5px;
+    padding: 2px;
+
+}
+.inputRow {
+    padding: 5px 5px 5px 5px;
+}
+.smallBox {
+    width: 50px;
 }
 .label {
     display: inline-block;
@@ -60,6 +74,15 @@
     color: #fff;
 }
 .point {
+    display: inline-block;
+    width: 90%;
+}
+.pointclose {
+    display: inline-block;
+    width: 20px;
+    text-align: right;
+}
+.pointWrapper {
     width: 100%;
 }
 .button {
@@ -81,4 +104,7 @@
 }
 .hidden {
     display: none !important;
+}
+.header {
+    background-color:goldenrod;
 }

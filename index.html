@@ -6,6 +6,7 @@
 <div id="canvasBorder">
     <canvas id="canvas" mousemove="drawCrosshair" mouseout=""></canvas>
 </div>
+
 <!-- <div id="resizeW"></div> -->
 
 <div id="pointlist">
@@ -16,41 +17,59 @@
         <div class="row">
             <!-- <div class="label">Datum: </div> -->
             <!-- <div class="value" id="datum0">Not set</div> -->
-
-            <div><button id="showHideCalib">Show/hide Calibration</button></div>
+            
+            <!-- <div><button id="showHideCalib">Show/hide Calibration</button></div> -->
         </div>
+        
         <div class="row">
             <div class="button"><button id="markPoints0">Mark Curve Points</button></div>
             <div class="button"><button id="clearPoints">Clear Markers</button></div>
         </div>
+        <div class="row header">
+            MARKED POINTS (X, Y)
+        </div>
         <div id="series0" class="seriesList"></div>
     </div>
 </div>
+
 <div id="calibrate">
     <div>
         <div id="calibStatus" class="calibHeader set">Chart calibrated</div>
-        <div id="point1status" class="calibHeader set">Point 1:</div>
-        <div id="calibPoint1" class="value">Uses Datum</div>
-        <div class="button" id="setDatum0div"><button id="setDatum0btn">Set Datum</button></div>
-        <div id="point2entry">
-            <!-- <div>Pixel Location: <div class="label" id="point1pixel">N/A</div> -->
+        <div id="point1status" class="calibHeader set">Step 1: Mark Datum</div>
 
-            <div>Measured:</div>
-            X-Value: <input type="text" name="" id="calib1valueX" value="0">
-            Y-Value: <input type="text" name="" id="calib1valueY" value="0">
-            <button id="setCalib1">Set Point</button>
+        <div class="inputRow">
+            <div class="button" id="setDatum0div"><button id="setDatum0btn">Mark Datum</button></div>
+            
+            <div class="label">X,Y = </div>
+            <div id="calibPoint1" class="value">0, 0</div>
         </div>
-    </div>
-    <div>
-        <div id="point2status" class="calibHeader set">Point 2:</div>
-        <div id="calibPoint2" class="value">Not set</div>
-        <div class="button"><button id="selectPoint2">Select Point</button></div>
-        <div id="point2entry">
+        <!-- <div id="point2entry"></div> -->
+            <!-- <div>Pixel Location: <div class="label" id="point1pixel">N/A</div> -->
+            
+        <div id="point1status" class="calibHeader set">Step 2: Input chart reading at datum</div>
+
+        <div class="inputRow">
+            X = <input type="text" name="" id="calib1valueX" class="smallBox" value="0">
+            Y = <input type="text" name="" id="calib1valueY" class="smallBox" value="0">
+        </div>
+            <!-- <button id="setCalib1">Set Point</button> -->
+        </div>
+        <div id="point2status" class="calibHeader set">Step 3: Mark Calibration Point</div>
+        
+        <div class="inputRow">
+            <div class="button"><button id="selectPoint2">Mark Point</button></div>
+            <div class="label">X,Y = </div>
+            <div id="calibPoint2" class="value">0, 0</div>
+        </div>
+        <!-- <div id="point2entry"> -->
+        <div id="point2status" class="calibHeader set">Step 3: Input reading at calibration point</div>
             <!-- <div>Pixel Location: <div class="label" id="point2pixel">N/A</div></div> -->
-            <div>Measured:</div>
-            X-Value: <input type="text" name="" id="calib2valueX" class="" value="">
-            Y-Value: <input type="text" name="" id="calib2valueY" class="" value="">
-            <button id="setCalib2">Set Point</button>
+            <!-- <div>Associated Chart Reading:</div> -->
+            <div class="inputRow">
+            X = <input type="text" name="" id="calib2valueX" class="smallbox" value="">
+            Y = <input type="text" name="" id="calib2valueY" class="smallbox" value="">
+            </div>
+            <!-- <button id="setCalib2">Set Point</button> -->
         </div>
     </div>
     <div style="display: none;">
@@ -67,6 +86,7 @@
     </div>
 
 </div>
+
 
 <div id="regressionBox">
     <div>Polynomial Regression</div>
@@ -89,10 +109,11 @@
 
     How to use this tool:
     <span>1. Load your graph</span>
-    <span>2. Set the datum</span>
-    <span>3. Set a known calibration point</span>
-    <span>4. Select "mark points" and calibrate the chart against some points from your curve.</span>
-    <span>5. Adjust regression degree until it works for you</span>
+    <span>2. Set the datum and mark the matching measured values</span>
+    <span>3. Set a known calibration point with a differeny x,y and enter the measured values</span>
+    <span>4. Select "Mark points" and calibrate the chart against some points from your curve.</span>
+    <span>5. Adjust regression degree until it fits the curve</span>
+    <span>6. Test out the prediction prior to using the regression formula elshhwere</span>
     </pre>
 
 </div>
