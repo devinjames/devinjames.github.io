@@ -152,6 +152,7 @@ var clearGraph = function () {
     // ctx.scale(1,1);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
     drawDatum(datum.x, datum.y);
+    drawCalibMarker(calibrations[activeSeries].x1, calibrations[activeSeries].y1);
 }
 
 var canvasXYtoImageXY = function(x, y) {
@@ -202,7 +203,7 @@ var drawCalibMarker = function(x, y) {
     }
 
     var c = canvas.getContext("2d")
-    let r = 7;
+    let r = 5;
 
     // draw circle
     c.beginPath();
