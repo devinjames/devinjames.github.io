@@ -7,32 +7,31 @@ var canvas = document.getElementById("canvas"),
 ctx = canvas.getContext("2d");
 crosshairs = canvas.getContext("2d");
 
-canvas.width = 800;
-canvas.height = 468;
+canvas.width = 940;
+canvas.height = 552;
 
 var prevCanvas = {height: canvas.height, width: canvas.width }; // for managing resizing
 
 // var seriesColors = ["green", "pink", "blue", "red", "yellow"];
 var activeSeries = 0;
-var datum = {x: 35, y: 443}
+var datum = {x: 36, y: 525 }
 // var chartWidth = window.width * 0.75;
 // var chartHeight = window.height * 0.75;
 var series = new Array(new Array());
 var sigFigs = 2;
 var calibrations = new Array({
-    x0: 35,
-    y0: 443,
+    x0: 36,
+    y0: 525,
     v_x0: 0,
     v_y0: 0,
-    x1: 533,
-    y1: 216,
+    x1: 628,
+    y1: 251,
     v_x1: 12,
     v_y1: 400
 }); // added some defaults for this graph
 
 // defaults for ./data/poly-3rd-order.png
-series[0] = [ [ 78, 428 ], [ 161, 378 ], [ 244, 302 ], [ 328, 219 ], [ 408, 148 ], [ 494, 111 ], [ 577, 122 ], [ 658, 201 ], [ 742, 371 ] ];
-
+series[0] = [[84, 507], [283, 356], [478, 172], [679, 140], [877, 443]];
 
 var polyResult = [];
 var polyDegree = 3;
@@ -256,6 +255,7 @@ var drawCalibMarker = function(x, y) {
 
     // draw circle
     c.beginPath();
+    c.globalAlpha = 0.35;
     c.strokeStyle = colors.calib;
     c.fillStyle = colors.calib;
     c.arc(x, y, r, 0, Math.PI * 2);
@@ -284,6 +284,7 @@ var drawCalibMarker = function(x, y) {
 
 
     // return to black?
+    c.globalAlpha = 1.0;
     c.strokeStyle = "black";
     c.fillStyle = "black";
 }

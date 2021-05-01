@@ -127,3 +127,9 @@ body {
 .hide {
     display: none;
 }
+#markerPanel {
+    text-align: center;
+    padding: 5px;
+    border-top: solid 1px rgb(145, 145, 145);
+    margin-top: 5px;
+}
