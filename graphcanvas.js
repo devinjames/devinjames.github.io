@@ -1235,6 +1235,7 @@ window.addEventListener('paste', (event) => {
     }
 });
 
+
     // keep this at the bottom, this is init stuff for the sample chart
     window.onload = function() {
         document.getElementById("calib2valueX").value = calibrations[0].v_x1;
@@ -1246,3 +1247,4 @@ window.addEventListener('paste', (event) => {
         drawRegression();
         // resetEverything();
     }
+
