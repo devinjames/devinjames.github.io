@@ -1084,8 +1084,18 @@ window.addEventListener("keydown", (e) => {
         zoomRatio -= 0.25;
         clearGraph();
         drawZoomBox(crossXY[0], crossXY[1]);
-    } else if (e.key == "z") {
+    } else if (e.key == "z" || e.key == 'Z') {
         document.getElementById('showZoom').checked = !document.getElementById('showZoom').checked;
+    } else if (e.key == "s" || e.key == 'S') {
+        if (colors.crosshair == 'black') {
+            colors.crosshair = "red";
+            colors.zoomBox = "red";
+        } else {
+            colors.crosshair = "black";
+            colors.zoomBox = "black";
+        }
+        // refreshGraph();
+        
     } else if (e.key == "ArrowUp") {
         crossXY[1] -= 1;
         e.preventDefault();

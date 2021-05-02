@@ -13,6 +13,16 @@
 <!-- <div id="resizeW"></div> -->
 
 <div id="pointlist">
+    <div>
+        <div class="row header">FILE</div>
+        <div class="row r">
+            Upload from file:
+            </div>
+        <div class="row r">
+            <input type="file" id="filebrowsed">                    
+        </div>
+        
+    </div>
     <div class="seriesBlock">
         <div class="row header">SETTINGS</div>
         <div class="row">
@@ -98,6 +108,7 @@
     <div id="regressionPredictY" class="r">Y = 0</div>
 
 </div>
+
 <div id="notes">
     <pre>
     <b><u>How to use this tool:</u></b>
@@ -109,19 +120,28 @@
     <span>6. Test out the prediction with the built-in calculator to confirm the calibration performs as expected.</span>
     <span>7. Click the mouse to return the predicted Y.</span>
 
-    NOTES:
+    <b><u>NOTES:</u></b>
     * Single clicks in the chart only.
     * Regression will only be shown when cursor is not over the chart (so as not to interfere with your readings)
     * Use the arrows and "enter" to move by pixel when calibrating the chart or settings points
-    * Use +/- keys to change the zoom factor of the marking window
     * Click anywhere on the page (to set the focus) and press Ctrl+V to paste your clipboard image into the graph
     * After calibration, click any point on the graph to recalculate the Y value at an X value on the curve
-    * Press "Esc" to exit from any of the calibration modes
+
+    <b><u>KEYBOARD SHORTCUTS:</u></b>
+    + : Increase/decrease zoom scale
+    - : Increase/decrease zoom scale
+    S : Toggle zoom box & crosshair colors between red and black
+    Z : Toggle zoom box
+
+    Arrows : Move crosshairs around
+    Enter : Mark point under crosshair 
+    ESC : Escape current mode
+    Ctrl+V : Paste image from clipboard
 
     </pre>
 
 </div>
-Select Graph File: <input type="file" id="filebrowsed">
+
 <!-- <div><button id="addSeries">Add series</button></div> -->
 
 <!-- <div><button>Export as CSV</button></div> -->
