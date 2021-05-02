@@ -16,6 +16,7 @@
             <input type="checkbox" name="showZoom" id="showZoom" checked="true"><label for="showZoom">Show Magnifier</label>
         </div>
         <div class="row"><label for="showRegression"><input type="checkbox" name="showRegression" checked="true" id="showRegression">Plot Regression</label></div>            
+        <div class="row"><label for="showPrediction"><input type="checkbox" name="showPrediction" checked="true" id="showPrediction">Cursor follows prediction</label></div>            
         <div class="row">
             &nbsp;
             <!-- <div class="label">Datum: </div> -->
@@ -40,7 +41,7 @@
 <div></div>
 
 <div id="calibrate">
-        <div id="" class="header r">Chart scale calibration</div>
+        <div id="" class="header r">Scale calibration</div>
         <div id="step1status" class="calibHeader set r">Step 1: Mark Datum <span id="calib1bad" class="calibStatusMarker hide">❌</span><span id="calib1ok" class="calibStatusMarker">👍</span></div>
 
         <div class="inputRow r">
@@ -78,25 +79,8 @@
         <div class="inputRow r">
             <div class="button"><button id="markPoints0">Mark Curve Points</button></div>
         </div>        
-    </div>
-
-
-
-    <div style="display: none;">
-        <div class="calibHeader">
-            Results
-        </div>
-        <div>
-            dX = <span id="calibdx">Not set</span>
-        </div>
-        <div>
-            dY = <span id="calibdy">Not set</span>
-        </div>
-        
-    </div>
-
-
 </div>
+
 
 
 <div id="regressionBox">
@@ -113,20 +97,23 @@
 </div>
 <div id="notes">
     <pre>
-    How to use this tool:
+    <b><u>How to use this tool:</u></b>
     <span>1. Load your graph</span>
-    <span>2. Set the datum and mark the associated chart X,Y </span>
-    <span>3. Set the scale by picking a calibration point with a differeny x,y than the datum and enter the charted values</span>
+    <span>2. Set the datum and enter X,Y readings from the chart axis.</span>
+    <span>3. Select a second calibration point (must be above and to the right of the datum) and enter the X,Y readings from the chart axis</span>
     <span>4. Select "mark points" to select points on the curve.</span>
-    <span>5. Adjust the regression degree until it matches the charted curve.</span>
-    <span>6. Test out the prediction with the built-in calculator to confirm the formula is calibrated as expected.</span>
+    <span>5. Adjust the regression degree until it matches the charted curve (start low).</span>
+    <span>6. Test out the prediction with the built-in calculator to confirm the calibration performs as expected.</span>
+    <span>7. Click the mouse to return the predicted Y.</span>
 
-    TIPS:
+    NOTES:
     * Single clicks in the chart only.
+    * Regression will only be shown when cursor is not over the chart (so as not to interfere with your readings)
     * Use the arrows and "enter" to move by pixel when calibrating the chart or settings points
     * Use +/- keys to change the zoom factor of the marking window
     * Click anywhere on the page (to set the focus) and press Ctrl+V to paste your clipboard image into the graph
     * After calibration, click any point on the graph to recalculate the Y value at an X value on the curve
+    * Press "Esc" to exit from any of the calibration modes
 
     </pre>
 
@@ -145,6 +132,9 @@ Select Graph File: <input type="file" id="filebrowsed">
 
 <pre>
     What's new:
+    2021-05-02
+    [+] UX improvements 😎
+
     2021-04-06
     [+] Added Ctrl+V to paste
     [!] Fixed datum at non 0,0 coordinate corrected

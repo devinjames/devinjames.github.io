@@ -42,7 +42,7 @@ UX
 [ ] show x,y location of cursor when moving
 [ ] layer inconsisency for markers and regressions on listener events (point list and mouseover/mouseout of canvas)
 [ ] Don’t allow +/- to change zoom when zoombox is not active (i.e. mouse not over canvas, zoombox button not checked)
-[ ] on load load the default state of datum and scale into the ui
+[ ] on load the default state of datum and scale into the ui
 [ ] User selection for colors (crosshairs, datum, markers, highlighted marker)
 
 SCALING

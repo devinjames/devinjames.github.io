@@ -244,13 +244,18 @@ var refreshGraph = function(regression=true, markedPoints=true, datumMarker=true
 
 }
 
-var drawRegression = function() {
+var drawRegression = function(zoomX, zoomY) {
     /*
         Graphs the regression formulated from the marked points
+        zoomX and zoomY will be defined if the zoombox is shown
     */
     for (let x = datum.x; x < canvas.width; x++) {
         let y = new window.poly(polyResult, polyDegree).predictY(polyResult, transformPoint(x, 0).x);
         let pt = transformPoint(x, y, true);
+        if (pt.y > datum.y) {
+            break;
+        }
+        
         drawSquareMarker(x, pt.y, colors.regressionPoint, 2, 2);
     }
 }
@@ -258,6 +263,28 @@ var drawRegression = function() {
 var drawLineAtUserX = function() {
     let x = transformPoint(document.getElementById("predictInput").value, 1, true).x;
     drawVerticalLine(x)
+}
+
+var drawTriangle = function(x, y, h, alpha, color) {
+    // console.log('triangle x,y=' + x + ',' + y);
+    var c = canvas.getContext("2d");
+    c.globalAlpha = alpha;
+    c.strokeStyle = color;
+    c.fillStyle = color;
+    let dx = h / 2;
+    let dy = h / 2;
+    c.beginPath();
+    
+    c.moveTo(x - dx, y + dy);   // bottom-left
+    c.lineTo(x, y - dy);          // top
+    c.lineTo(x + dx, y + dy);   // bottom-right
+    c.lineTo(x - dx, y + dy);   // bottom-left
+    
+    c.stroke();
+    c.fill();
+    c.globalAlpha = 1;
+
+
 }
 
 var drawVerticalLine = function(x) {
@@ -269,6 +296,7 @@ var drawVerticalLine = function(x) {
     c.moveTo(x, 0);
     c.lineTo(x, canvas.height);
     c.stroke();
+    c.globalAlpha = 1;
     // c.fill();
 
 
@@ -294,7 +322,7 @@ var drawCalibMarker = function(x, y) {
 
     // draw circle
     c.beginPath();
-    c.globalAlpha = 0.35;
+    c.globalAlpha = 0.45;
     c.strokeStyle = colors.calib;
     c.fillStyle = colors.calib;
     c.arc(x, y, r, 0, Math.PI * 2);
@@ -529,7 +557,7 @@ var checkStepOK = function() {
     */
 
         // check datum pixel x,y
-        if (calibrations[activeSeries].x0 > 0 && calibrations[activeSeries].y0 > 0 || datum.x == null || datum.y == null) {
+        if (calibrations[activeSeries].x0 > 0 && calibrations[activeSeries].y0 > 0 && datum.x != null && datum.y != null) {
             toggleClass('calib1bad', "+hide");
             toggleClass('calib1ok', "-hide");
             toggleClass('step1status', "+set");
@@ -617,8 +645,8 @@ var updateCalibrationUI = function() {
     // update the calibration pointss on the ui
     // document.getElementById("point1pixel").innerText =  datum.x + ", " + datum.y;
     // document.getElementById("point2pixel").innerText = calibrations[activeSeries].x1 + ", " + calibrations[activeSeries].y1;
-    document.getElementById("calibdx").innerText = getScale().x;
-    document.getElementById("calibdy").innerText = getScale().y;
+    // document.getElementById("calibdx").innerText = getScale().x;
+    // document.getElementById("calibdy").innerText = getScale().y;
     redrawUiPointList();
 }
 
@@ -672,7 +700,10 @@ var addPointToUiList = function (x, y) {
     });
     a.addEventListener('mouseover', (e) => {
         drawSeries();
+        if (document.getElementById("showRegression").checked)
+            drawRegression();
         drawSquareMarker(e.target.getAttribute("data-x"), e.target.getAttribute("data-y"), "red");
+
     });
     // a.addEventListener('mouseout', (e) => { clearGraph(); });
 
@@ -927,7 +958,13 @@ var handleClick = function (e) {
 
 // draw when mouse is over canvas
 canvas.addEventListener("mousemove", (e) => {
+
+
         drawCrosshair(e);
+
+        // TODO: add this, however regression shouldn't be shown where the crosshair is.
+        // if (document.getElementById("showRegression").checked)
+        //     drawRegression(e.offsetX, e.offsetY);        
         e.stopPropagation();
         if (mode == modes.SET_DATUM) {
             drawDatum(e.offsetX, e.offsetY)
@@ -935,6 +972,18 @@ canvas.addEventListener("mousemove", (e) => {
         } else if (mode == modes.SET_CALIB) {
             drawCalibMarker(e.offsetX, e.offsetY)
         }
+
+        if (document.getElementById("showPrediction").checked && mode == modes.NOTHING && e.offsetX > calibrations[activeSeries].x0) {
+            
+            let p = new window.poly(polyResult);
+            let t = transformPoint(e.offsetX, e.offsetY);
+            let predictedY = p.predictY(polyResult, t.x);
+            if (predictedY < calibrations[activeSeries].v_y0) {
+                return;
+            }
+            drawTriangle(e.offsetX, transformPoint(t.x, predictedY, true).y, 10, 0.8, '#eb34d5');
+        }
+        
         // drawLineAtUserX();
     });
 
@@ -948,8 +997,8 @@ canvas.addEventListener("mouseout", (e) => {
     if (document.getElementById("showRegression").checked) {
         drawRegression();
     }
-    setMode(modes.NOTHING);
-    clearButtons();
+    // setMode(modes.NOTHING);
+    // clearButtons();
 });
 
 // handle all canvas clicks
@@ -1042,24 +1091,51 @@ window.addEventListener("keydown", (e) => {
         e.preventDefault();
         drawZoomBox(crossXY[0], crossXY[1]);
         drawCrosshair(e, crossXY[0], crossXY[1]);
+        if (mode == modes.SET_DATUM) {
+            drawDatum(crossXY[0], crossXY[1]);
+            
+        } else if (mode == modes.SET_CALIB) {
+            drawCalibMarker(crossXY[0], crossXY[1]);
+        }        
     } else if (e.key == "ArrowDown") {
         crossXY[1] += 1;
         e.preventDefault();
         drawZoomBox(crossXY[0], crossXY[1]);
         drawCrosshair(e, crossXY[0], crossXY[1]);
+        if (mode == modes.SET_DATUM) {
+            drawDatum(crossXY[0], crossXY[1]);
+            
+        } else if (mode == modes.SET_CALIB) {
+            drawCalibMarker(crossXY[0], crossXY[1]);
+        }        
     } else if (e.key == "ArrowLeft") {
         crossXY[0] -= 1;
         e.preventDefault();
         drawZoomBox(crossXY[0], crossXY[1]);
         drawCrosshair(e, crossXY[0], crossXY[1]);
+        if (mode == modes.SET_DATUM) {
+            drawDatum(crossXY[0], crossXY[1]);
+            
+        } else if (mode == modes.SET_CALIB) {
+            drawCalibMarker(crossXY[0], crossXY[1]);
+        }        
     } else if (e.key == "ArrowRight") {
         crossXY[0] += 1;
         e.preventDefault();
         drawZoomBox(crossXY[0], crossXY[1]);
         drawCrosshair(e, crossXY[0], crossXY[1]);
+        if (mode == modes.SET_DATUM) {
+            drawDatum(crossXY[0], crossXY[1]);
+            
+        } else if (mode == modes.SET_CALIB) {
+            drawCalibMarker(crossXY[0], crossXY[1]);
+        }        
     } else if (e.key == "Enter") {
         // console.log("Enter pressed, mode = ".concat(mode));
-        if (mode == modes.MARK_POINT) {
+        if ( mode == modes.NOTHING) {
+            document.getElementById("predictInput").value = transformPoint(crossXY[0], crossXY[1]).x.toFixed(2)
+            recalcPoly();
+        } else if (mode == modes.MARK_POINT) {
             series[activeSeries].push([crossXY[0], crossXY[1]]);
             drawSeries();
             redrawUiPointList();
@@ -1076,10 +1152,14 @@ window.addEventListener("keydown", (e) => {
         } else if (mode == modes.SET_CALIB) {
             setMode(modes.NOTHING);
             setCalibrationXYpixels(activeSeries, 1, crossXY[0], crossXY[1]);
-            toggleClass("step3status", "-activeBtn");
+            toggleClass("selectPoint2", "-activeBtn");
+            drawCalibMarker();
             // toggleClass("step3status", "-missing");
             // toggleClass("step3status", "+set");
         }
+    } else if (e.key == "Escape") {
+        setMode(modes.NOTHING);
+        clearButtons();
     }
 });
 
