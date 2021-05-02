@@ -137,3 +137,6 @@ body {
     border-top: solid 1px rgb(145, 145, 145);
     margin-top: 5px;
 }
+.cachetest {
+    display: none;
+}
