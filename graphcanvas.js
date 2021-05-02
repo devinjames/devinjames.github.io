@@ -1186,6 +1186,7 @@ window.addEventListener('paste', (event) => {
         document.getElementById("calib2valueX").value = calibrations[0].v_x1;
         document.getElementById("calib2valueY").value = calibrations[0].v_y1;
         document.getElementById("calibPoint2").innerText = calibrations[0].x1 + ", " + calibrations[0].y1;
+        document.getElementById("calibPoint1").innerText = calibrations[0].x0 + ", " + calibrations[0].y0;
         updateCalibrationUI();
         recalcPoly();
         drawRegression();
