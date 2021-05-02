@@ -84,11 +84,13 @@ body {
 .point {
     display: inline-block;
     width: 90%;
+    
 }
 .pointclose {
     display: inline-block;
     width: 20px;
     text-align: right;
+    
 }
 .pointWrapper {
     width: 100%;
