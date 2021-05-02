@@ -111,7 +111,6 @@ var recalculateLandedPoints = function() {
 
 var buildEquation = function(terms) {
     let out = "Y = ";
-    console.log(terms[0]);
     if (isNaN(terms[0])) {
         return "Select two or more points first";
     }
@@ -123,7 +122,7 @@ var buildEquation = function(terms) {
 
         if (term < 1) {
             term = term.toExponential(2).toString();
-            console.log(term.toString());
+            // console.log(term.toString());
         } else {
             term = term.toFixed(3);
         }
@@ -145,7 +144,7 @@ var buildEquation = function(terms) {
             out = out.concat(" + ");
         }
     }
-    console.log(out);
+    // console.log(out);
     return out;
 
 }
@@ -157,7 +156,7 @@ var recalcPoly = function() {
         const pt = series[activeSeries][i];
         data.push(transformPoint(pt[0], pt[1]));
     }
-    console.log(data);
+    // console.log(data);
     var p = new window.poly(data, polyDegree);
     polyResult = p.getTerms();
     document.getElementById("deg3poly").innerText = buildEquation(polyResult);
@@ -262,7 +261,7 @@ var drawLineAtUserX = function() {
 }
 
 var drawVerticalLine = function(x) {
-    console.log("DRQA");
+    // console.log("DRQA");
     var c = canvas.getContext("2d")
     c.globalAlpha = 0.2;
     c.strokeStyle = colors.prediction;
@@ -476,7 +475,7 @@ var markPoint = function (e) {
     // add a new point to the marked list
     let x = e.offsetX;
     let y = e.offsetY;
-    console.log("Marking new point x,y=" + x + "," + y);
+    // console.log("Marking new point x,y=" + x + "," + y);
     series[activeSeries].push([x, y])
     addPointToUiList(x, y);
     drawSeries(); // redraw
@@ -493,7 +492,7 @@ var markPoint = function (e) {
 
 var setDatum = function(x, y) {
     //set the datum vars
-    console.log("Setting datum")
+    // console.log("Setting datum")
     datum.x = x;
     datum.y = y;
     // document.getElementById("datum0").innerText = x + ", " + y;
@@ -505,7 +504,7 @@ var setCalibrationXYpixels = function(seriesId, pointNum, x, y) {
     // store the pixels for calibration points
     calibrations[seriesId]['x' + pointNum] = x;
     calibrations[seriesId]['y' + pointNum] = y;
-    console.log(calibrations[seriesId]);
+    // console.log(calibrations[seriesId]);
     updateCalibrationUI();
 }
 
@@ -513,7 +512,7 @@ var setCalibrationXYvalues = function(seriesId, pointNum, x, y) {
     // store the user entered values for calibration points
     calibrations[seriesId]['v_x' + pointNum] = parseInt(x);
     calibrations[seriesId]['v_y' + pointNum] = parseInt(y);
-    console.log(calibrations[seriesId]);
+    // console.log(calibrations[seriesId]);
     updateCalibrationUI();
 }
 
@@ -559,14 +558,6 @@ var checkStepOK = function() {
             toggleClass('step2status', "-set");
             toggleClass('step2status', "+missing");            
         }            
-
-        console.log(calibrations[activeSeries].x1 > 0);
-        console.log(calibrations[activeSeries].y1 > 0 );
-        console.log((calibrations[activeSeries].x1 - calibrations[activeSeries].x0) > 10);
-        console.log((calibrations[activeSeries].y0 - calibrations[activeSeries].y1) > 10);
-        console.log((calibrations[activeSeries].v_x1 - calibrations[activeSeries].v_x0) > 0);
-        console.log((calibrations[activeSeries].v_y1 - calibrations[activeSeries].v_y0) > 0);
-            
 
         // check calibration pixel x,y
         if (calibrations[activeSeries].x1 > 0 &&
@@ -665,7 +656,6 @@ var addPointToUiList = function (x, y) {
 
     
     a.addEventListener('click', (e) => {
-        console.log('click');
         // series[activeSeries].splice(l, 1);
         for (let i = 0; i < series[activeSeries].length; i++) {
             const element = series[activeSeries][i];
@@ -712,15 +702,11 @@ function loadNewImageFromFile(el) {
     /* 
         read image selected from user upload and display it
      */
-    // console.log("changing image");
     let fileobj = el.target.files[0];
-    console.log(fileobj);
     let fr = new FileReader();
     fr.onload = function(e) {
         resetEverything();
-        // console.log("loaded image");
         image = new Image();
-        // console.log(e.target.result);
         image.src = e.target.result;
         image.onload = function () {
             canvas.height = image.naturalHeight / image.naturalWidth * canvas.width;
@@ -739,7 +725,6 @@ function loadNewImageFromFile(el) {
 
 var setMode = function(newMode) {
     // sets the current clickmode for the canvas
-    // console.log("mode changed to " + newMode);
     mode = newMode;
     return;
 }
@@ -753,22 +738,18 @@ var toggleClass = function(id, className) {
     var modifier = className.substring(0, 1);
 
     if (modifier == "+") {
-        console.log("Adding " + className.substring(1, className.length));
         classList.add(className.substring(1,className.length));
         return;
     } else if (modifier == "-") {
-        console.log("Removing " + className.substring(1, className.length));
         classList.remove(className.substring(1,className.length));
         return;
     }
 
-    console.log("Toggling " + className.substring(1, className.length));
     if (classList.contains(className)) {
         classList.remove(className);
     } else {
         classList.add(className);
     }
-    console.log(classList);
 
 }
 
@@ -1023,7 +1004,7 @@ document.getElementById('markPoints0').addEventListener("click", (e) => {
 
 // selection second point button
 document.getElementById("selectPoint2").addEventListener("click", (e) => {
-    console.log("Setting pt2 by click");
+    // console.log("Setting pt2 by click");
     toggleClass("selectPoint2", "+activeBtn")
     setMode(modes.SET_CALIB);
     e.target.blur();
@@ -1042,13 +1023,13 @@ document.getElementById("showRegression").addEventListener("click", (e) => { if 
 window.addEventListener("keydown", (e) => {
 
     if (e.key == "+" || e.key == "=") {
-        console.log("zoom ratio increase");
+        // console.log("zoom ratio increase");
         zoomRatio += 0.25;
         clearGraph();
         drawZoomBox(crossXY[0], crossXY[1]);
 
     } else if (e.key == "-") {
-        console.log("zoom ratio decrease");
+        // console.log("zoom ratio decrease");
         if (zoomRatio <= 1)
             return;
         zoomRatio -= 0.25;
@@ -1077,7 +1058,7 @@ window.addEventListener("keydown", (e) => {
         drawZoomBox(crossXY[0], crossXY[1]);
         drawCrosshair(e, crossXY[0], crossXY[1]);
     } else if (e.key == "Enter") {
-        console.log("Enter pressed, mode = ".concat(mode));
+        // console.log("Enter pressed, mode = ".concat(mode));
         if (mode == modes.MARK_POINT) {
             series[activeSeries].push([crossXY[0], crossXY[1]]);
             drawSeries();
@@ -1103,7 +1084,6 @@ window.addEventListener("keydown", (e) => {
 });
 
 document.getElementById("calib1valueX").addEventListener('keyup', (e) => {
-    console.log(e.target.value);
     setCalibrationXYvalues(activeSeries, 0, e.target.value,  document.getElementById("calib1valueY").value);
     recalcPoly();
     checkStepOK();
@@ -1111,8 +1091,6 @@ document.getElementById("calib1valueX").addEventListener('keyup', (e) => {
 });
 
 document.getElementById("calib1valueY").addEventListener('keyup', (e) => {
-    // console.log(document.getElementById("calib1valueY").value);
-    console.log(e.target.value);
     setCalibrationXYvalues(activeSeries, 0, document.getElementById("calib1valueX").value,  e.target.value);
     recalcPoly();
     checkStepOK();
@@ -1120,8 +1098,6 @@ document.getElementById("calib1valueY").addEventListener('keyup', (e) => {
 });
 
 document.getElementById("calib2valueX").addEventListener('keyup', (e) => {
-    // console.log(document.getElementById("calib2valueX").value);
-    console.log(e.target.value);
     setCalibrationXYvalues(activeSeries, 1, e.target.value,  document.getElementById("calib2valueY").value);
     recalcPoly();
     checkStepOK();
@@ -1129,8 +1105,6 @@ document.getElementById("calib2valueX").addEventListener('keyup', (e) => {
 });
 
 document.getElementById("calib2valueY").addEventListener('keyup', (e) => {
-    // console.log(document.getElementById("calib2valueY").value);
-    console.log(e.target.value);
     setCalibrationXYvalues(activeSeries, 1, document.getElementById("calib2valueX").value,  e.target.value);
     recalcPoly();
     checkStepOK();
@@ -1157,10 +1131,10 @@ window.addEventListener('paste', (event) => {
     let paste = event.clipboardData.items;
  
     for (let i=0; i < paste.length; i++) {
-        console.log(paste[i]);
+        // console.log(paste[i]);
         if (paste[i].type.indexOf("image") !== -1) {
             event.preventDefault();
-            console.log("found image: " + paste[i].type);
+            // console.log("found image: " + paste[i].type);
 
             let imageBlob = paste[i].getAsFile(); // creates the blob
 
